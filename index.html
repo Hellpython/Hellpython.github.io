@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Hellpython의 GitHub Pages 홈페이지입니다. 블로그, 프로젝트 기록, 실험 노트를 모아갑니다.">
+    <meta name="description" content="백엔드 개발자 지망생 Hellpython의 Dev Log입니다.">
     <title>Hellpython</title>
     <style>
       :root {
@@ -13,6 +13,8 @@
         --line: #d8dee9;
         --paper: #f8fafc;
         --accent: #0f766e;
+        --accent-dark: #115e59;
+        --soft: rgba(15, 118, 110, 0.08);
       }
 
       * {
@@ -30,13 +32,19 @@
       }
 
       main {
-        width: min(960px, calc(100% - 40px));
+        width: min(1040px, calc(100% - 40px));
         min-height: 100vh;
         margin: 0 auto;
         display: grid;
+        gap: 72px;
+        padding: 64px 0 96px;
+      }
+
+      .hero {
+        min-height: calc(100vh - 128px);
+        display: grid;
         align-content: center;
         gap: 28px;
-        padding: 64px 0;
       }
 
       .eyebrow {
@@ -51,39 +59,185 @@
       }
 
       h1 {
-        max-width: 780px;
+        max-width: 860px;
         margin: 0;
-        font-size: clamp(44px, 9vw, 96px);
-        line-height: 0.95;
+        font-size: clamp(42px, 8vw, 92px);
+        line-height: 1.02;
         letter-spacing: 0;
       }
 
       p {
-        max-width: 640px;
+        max-width: 720px;
         margin: 0;
         color: var(--muted);
         font-size: clamp(18px, 2vw, 22px);
         line-height: 1.7;
       }
 
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        min-height: 44px;
+        padding: 0 16px;
+        border: 1px solid var(--accent);
+        border-radius: 8px;
+        background: var(--accent);
+        color: #ffffff;
+        font-size: 15px;
+        font-weight: 800;
+        text-decoration: none;
+      }
+
+      .button.secondary {
+        border-color: var(--line);
+        background: rgba(255, 255, 255, 0.72);
+        color: var(--accent-dark);
+      }
+
       a {
         color: var(--accent);
         font-weight: 700;
+      }
+
+      .logs {
+        display: grid;
+        gap: 48px;
+      }
+
+      .topic {
+        display: grid;
+        gap: 18px;
+        padding-top: 28px;
+        border-top: 1px solid var(--line);
+      }
+
+      h2 {
+        margin: 0;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.15;
+        letter-spacing: 0;
+      }
+
+      .topic p {
+        max-width: 680px;
+        font-size: 17px;
+      }
+
+      .note-list {
+        display: grid;
+        gap: 14px;
+        margin: 10px 0 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .note-list li {
+        display: grid;
+        gap: 4px;
+        padding: 16px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .note-title {
+        color: var(--ink);
+        font-size: 18px;
+        font-weight: 800;
+      }
+
+      .note-meta {
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.6;
+      }
+
+      @media (max-width: 760px) {
+        main {
+          width: min(100% - 28px, 1040px);
+          gap: 48px;
+          padding: 40px 0 64px;
+        }
+
+        .hero {
+          min-height: calc(100vh - 80px);
+        }
       }
     </style>
   </head>
   <body>
     <main>
-      <div class="eyebrow">Hellpython.github.io</div>
-      <h1>Hello, GitHub Pages.</h1>
-      <p>
-        이곳은 Hellpython의 GitHub Pages 첫 페이지입니다.
-        앞으로 블로그, 프로젝트 기록, 실험 노트를 차근차근 채워갈 수 있습니다.
-      </p>
-      <p>
-        저장소:
-        <a href="https://github.com/Hellpython/Hellpython.github.io">github.com/Hellpython/Hellpython.github.io</a>
-      </p>
+      <div class="hero">
+        <div class="eyebrow">Hellpython.github.io</div>
+        <h1>Dev Log</h1>
+        <p>
+          JavaScript와 Node.js를 배우며 백엔드 개발자로 성장하는 과정을 기록합니다.
+          작은 실험과 배운 점을 천천히 쌓아갑니다.
+        </p>
+        <div class="actions">
+          <a class="button" href="https://github.com/Hellpython">GitHub</a>
+          <a class="button secondary" href="https://lessontutor.tistory.com/">블로그</a>
+          <a class="button secondary" href="https://github.com/Hellpython/Hellpython.github.io">사이트 저장소</a>
+        </div>
+      </div>
+
+      <div class="logs" aria-label="Dev Log topics">
+        <section class="topic">
+          <h2>JavaScript</h2>
+          <p>
+            모던 JavaScript Deep Dive를 읽고 정리한 내용과 블로그에 남긴 학습 기록을 모읍니다.
+          </p>
+          <ul class="note-list">
+            <li>
+              <a class="note-title" href="https://lessontutor.tistory.com/entry/JavaScirpt-%EB%B3%80%EC%88%98">변수</a>
+              <span class="note-meta">블로그에서 보기 · 2026.06.15</span>
+            </li>
+            <li>
+              <a class="note-title" href="https://lessontutor.tistory.com/entry/JavaScript-%ED%91%9C%ED%98%84%EC%8B%9D%EA%B3%BC-%EB%AC%B8">표현식과 문</a>
+              <span class="note-meta">블로그에서 보기 · 2026.06.15</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="topic">
+          <h2>Node.js</h2>
+          <p>
+            JavaScript 런타임, 서버 구조, API 구현을 공부하며 배운 내용을 정리합니다.
+          </p>
+        </section>
+
+        <section class="topic">
+          <h2>운영체제</h2>
+          <p>
+            프로세스, 메모리, 파일 시스템처럼 백엔드 개발의 기반이 되는 운영체제 개념을 정리합니다.
+          </p>
+          <ul class="note-list">
+            <li>
+              <a class="note-title" href="https://lessontutor.tistory.com/entry/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C-Intro">Intro</a>
+              <span class="note-meta">블로그에서 보기 · 2026.06.15</span>
+            </li>
+            <li>
+              <a class="note-title" href="https://lessontutor.tistory.com/entry/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C-OS%EB%8A%94-%EB%AD%90-%EB%95%8C%EB%AC%B8%EC%97%90-%EC%93%B8%EA%B9%8C">OS는 뭐 때문에 쓸까?</a>
+              <span class="note-meta">블로그에서 보기 · 2026.06.16</span>
+            </li>
+            <li>
+              <a class="note-title" href="https://lessontutor.tistory.com/entry/%EC%9A%B4%EC%98%81%EC%B2%B4%EC%A0%9C-OS%EB%8A%94-%EC%96%B4%EB%96%BB%EA%B2%8C-%EC%84%9C%EB%B9%84%EC%8A%A4%EB%A5%BC-%EC%A3%BC%EA%B3%A0-%EC%96%B4%EB%96%BB%EA%B2%8C-%EB%A7%8C%EB%93%A4%EC%96%B4%EC%A7%80%EB%82%98">OS는 어떻게 서비스를 주고, 어떻게 만들어지나</a>
+              <span class="note-meta">블로그에서 보기 · 2026.06.17</span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="topic">
+          <h2>네트워크</h2>
+          <p>
+            HTTP, TCP/IP, DNS처럼 서버와 클라이언트가 통신하는 흐름을 공부하며 정리합니다.
+          </p>
+        </section>
+      </div>
     </main>
   </body>
 </html>
