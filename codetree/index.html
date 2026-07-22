@@ -1,0 +1,314 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Codetree 문제 풀이 과정과 배운 점을 남기는 Hellpython의 학습 기록입니다.">
+    <title>Codetree Study Log · Hellpython</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #d8dee9;
+        --paper: #f8fafc;
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+        --soft: rgba(15, 118, 110, 0.08);
+        --complete: #16a34a;
+        --current: #d97706;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
+      }
+
+      a {
+        color: var(--accent-dark);
+        font-weight: 750;
+      }
+
+      main {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 96px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        margin-bottom: 64px;
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        gap: 22px;
+        padding-bottom: 56px;
+      }
+
+      .eyebrow,
+      .status {
+        width: fit-content;
+        border-radius: 999px;
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .eyebrow {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.74);
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 760px;
+        font-size: clamp(42px, 8vw, 76px);
+        line-height: 1.04;
+        letter-spacing: -0.025em;
+      }
+
+      .lead {
+        max-width: 700px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.75;
+      }
+
+      .trail-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .trail-card {
+        display: grid;
+        gap: 10px;
+        min-height: 150px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .trail-card.complete {
+        border-color: rgba(22, 163, 74, 0.35);
+        background: rgba(22, 163, 74, 0.06);
+      }
+
+      .trail-card.current {
+        border-color: rgba(217, 119, 6, 0.35);
+        background: rgba(217, 119, 6, 0.07);
+      }
+
+      .status {
+        padding: 5px 9px;
+        color: var(--muted);
+        background: rgba(100, 116, 139, 0.1);
+      }
+
+      .complete .status {
+        color: var(--complete);
+        background: rgba(22, 163, 74, 0.11);
+      }
+
+      .current .status {
+        color: var(--current);
+        background: rgba(217, 119, 6, 0.12);
+      }
+
+      .trail-card h2 {
+        font-size: 24px;
+      }
+
+      .trail-card p,
+      .entry p,
+      .entry li,
+      .record-format li {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .section {
+        display: grid;
+        gap: 24px;
+        padding-top: 48px;
+        margin-top: 48px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section > h2 {
+        font-size: clamp(28px, 4vw, 40px);
+        letter-spacing: -0.02em;
+      }
+
+      .entry {
+        display: grid;
+        gap: 18px;
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: rgba(255, 255, 255, 0.78);
+      }
+
+      .entry-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 8px 16px;
+      }
+
+      .entry h3 {
+        font-size: 25px;
+      }
+
+      time {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .topic-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .topic-list li {
+        padding: 7px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: var(--paper);
+        font-size: 14px;
+        font-weight: 700;
+      }
+
+      .record-format {
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .note {
+        padding: 18px 20px;
+        border-left: 4px solid var(--accent);
+        background: var(--soft);
+        color: var(--accent-dark);
+        line-height: 1.7;
+      }
+
+      @media (max-width: 680px) {
+        main {
+          width: min(100% - 28px, 920px);
+          padding-top: 28px;
+        }
+
+        .back-link {
+          margin-bottom: 44px;
+        }
+
+        .trail-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .entry {
+          padding: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back-link" href="/">← Dev Log로 돌아가기</a>
+
+      <header class="hero">
+        <div class="eyebrow">Codetree Study Log</div>
+        <h1 aria-label="푼 문제보다 배운 과정을 기록합니다.">푼 문제보다<br>배운 과정을 기록합니다.</h1>
+        <p class="lead">
+          프로그래밍 기초부터 알고리즘까지, 처음 생각한 접근과 막힌 이유,
+          다음에 다시 기억할 내용을 짧게 남깁니다.
+        </p>
+      </header>
+
+      <section class="trail-grid" aria-label="Codetree 학습 현황">
+        <article class="trail-card complete">
+          <span class="status">완료</span>
+          <h2>Trail 0 · Codetree 101</h2>
+          <p>프로그래밍 시작 단계의 모든 chapter와 test를 완료했습니다.</p>
+        </article>
+        <article class="trail-card current">
+          <span class="status">학습 중</span>
+          <h2>Trail 1 · Novice Low</h2>
+          <p>프로그래밍 기초 단계로 이동해 첫 chapter부터 시작했습니다.</p>
+        </article>
+      </section>
+
+      <section class="section" aria-labelledby="latest-log">
+        <h2 id="latest-log">학습 기록</h2>
+        <article class="entry">
+          <div class="entry-header">
+            <h3>Trail 0 완료, Trail 1 시작</h3>
+            <time datetime="2026-07-23">2026.07.23</time>
+          </div>
+          <p>
+            Codetree 101의 프로그래밍 시작 단계를 끝냈다. 문법을 한 번 보는 데서
+            그치지 않고, 입력과 분기, 반복, 배열을 작은 문제로 직접 확인했다.
+            이제 Novice Low에서 같은 기초를 더 다양한 문제에 적용한다.
+          </p>
+          <ul class="topic-list" aria-label="Trail 0에서 다룬 주제">
+            <li>기본</li>
+            <li>입출력</li>
+            <li>조건문 1</li>
+            <li>단순 반복문 1</li>
+            <li>조건문 2</li>
+            <li>1차원 배열</li>
+            <li>문자열</li>
+            <li>단순 반복문 2</li>
+            <li>다중 반복문</li>
+            <li>2차원 배열</li>
+          </ul>
+          <p class="note">
+            다음 목표: 정답 코드만 저장하지 않고, 문제마다 핵심 접근과 실수한
+            이유를 한 문장씩 남긴다.
+          </p>
+        </article>
+      </section>
+
+      <section class="section" aria-labelledby="record-rule">
+        <h2 id="record-rule">앞으로 남길 내용</h2>
+        <ol class="record-format">
+          <li>문제와 핵심 조건</li>
+          <li>처음 생각한 접근</li>
+          <li>막힌 지점 또는 틀린 이유</li>
+          <li>최종 접근과 시간복잡도</li>
+          <li>다시 풀 때 기억할 한 문장</li>
+        </ol>
+        <p class="note">
+          문제 본문이나 공식 해설은 복제하지 않고, 문제 링크와 직접 작성한 설명,
+          필요한 만큼의 코드만 기록합니다.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
