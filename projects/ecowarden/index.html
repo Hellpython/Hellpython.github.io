@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="EcoWarden 프로젝트에서 FastAPI와 PostgreSQL/PostGIS로 LiDAR 이벤트 수집, append-only 보존, 실시간 전달을 구현한 기록입니다.">
+    <meta property="og:title" content="EcoWarden · Hellpython">
+    <meta property="og:description" content="LiDAR 감지 이벤트를 신뢰 가능한 기록과 실시간 알림으로 연결한 Backend & Database 프로젝트">
+    <meta property="og:type" content="article">
+    <title>EcoWarden · Hellpython</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #10251f;
+        --muted: #5f716b;
+        --line: #dce6e1;
+        --paper: #f5f8f6;
+        --card: rgba(255, 255, 255, 0.82);
+        --forest: #0d5c45;
+        --forest-dark: #073f30;
+        --mint: #bff0d8;
+        --lime: #dff5a5;
+        --shadow: 0 24px 60px rgba(7, 63, 48, 0.09);
+      }
+
+      * { box-sizing: border-box; }
+
+      html { scroll-behavior: smooth; }
+
+      body {
+        margin: 0;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at 12% 4%, rgba(191, 240, 216, 0.72), transparent 28rem),
+          radial-gradient(circle at 92% 16%, rgba(223, 245, 165, 0.42), transparent 24rem),
+          var(--paper);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      a { color: inherit; }
+
+      .skip-link {
+        position: absolute;
+        top: -80px;
+        left: 16px;
+        z-index: 10;
+        padding: 10px 14px;
+        border-radius: 8px;
+        background: var(--forest-dark);
+        color: white;
+      }
+
+      .skip-link:focus { top: 16px; }
+
+      .shell {
+        width: min(1120px, calc(100% - 40px));
+        margin: 0 auto;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        min-height: 76px;
+        gap: 24px;
+      }
+
+      .brand {
+        color: var(--forest-dark);
+        font-size: 16px;
+        font-weight: 900;
+        text-decoration: none;
+      }
+
+      nav { display: flex; gap: 20px; }
+
+      nav a {
+        color: var(--muted);
+        font-size: 14px;
+        font-weight: 750;
+        text-decoration: none;
+      }
+
+      nav a:hover, nav a:focus-visible { color: var(--forest); }
+
+      main { overflow: hidden; }
+
+      .hero {
+        min-height: 660px;
+        display: grid;
+        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+        align-items: center;
+        gap: 64px;
+        padding: 88px 0 112px;
+      }
+
+      .eyebrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 30px;
+        padding: 0 11px;
+        border: 1px solid rgba(13, 92, 69, 0.18);
+        border-radius: 999px;
+        color: var(--forest);
+        background: rgba(255, 255, 255, 0.66);
+        font-size: 12px;
+        font-weight: 850;
+        letter-spacing: 0.04em;
+      }
+
+      h1, h2, h3, p { margin-top: 0; }
+
+      h1 {
+        margin-bottom: 24px;
+        font-size: clamp(58px, 9vw, 112px);
+        line-height: 0.9;
+        letter-spacing: -0.065em;
+      }
+
+      .hero-copy {
+        max-width: 730px;
+        margin-bottom: 34px;
+        color: #3d534b;
+        font-size: clamp(20px, 2.3vw, 28px);
+        line-height: 1.55;
+        word-break: keep-all;
+      }
+
+      .actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+      }
+
+      .button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-height: 46px;
+        padding: 0 18px;
+        border: 1px solid var(--forest);
+        border-radius: 10px;
+        color: white;
+        background: var(--forest);
+        font-size: 14px;
+        font-weight: 850;
+        text-decoration: none;
+      }
+
+      .button:hover, .button:focus-visible { background: var(--forest-dark); }
+
+      .button.secondary {
+        color: var(--forest-dark);
+        background: rgba(255, 255, 255, 0.72);
+        border-color: var(--line);
+      }
+
+      .signal-card {
+        position: relative;
+        min-height: 390px;
+        display: grid;
+        align-content: space-between;
+        padding: 34px;
+        overflow: hidden;
+        border: 1px solid rgba(255, 255, 255, 0.32);
+        border-radius: 28px;
+        color: white;
+        background: var(--forest-dark);
+        box-shadow: var(--shadow);
+      }
+
+      .signal-card::before,
+      .signal-card::after {
+        content: "";
+        position: absolute;
+        border: 1px solid rgba(191, 240, 216, 0.26);
+        border-radius: 50%;
+      }
+
+      .signal-card::before { width: 280px; height: 280px; top: -88px; right: -86px; }
+      .signal-card::after { width: 170px; height: 170px; top: -30px; right: -26px; }
+
+      .signal {
+        position: relative;
+        z-index: 1;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--lime);
+        box-shadow: 0 0 0 12px rgba(223, 245, 165, 0.09), 0 0 42px var(--lime);
+      }
+
+      .signal-card strong {
+        display: block;
+        margin-bottom: 12px;
+        color: var(--mint);
+        font-size: 13px;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+
+      .signal-card p {
+        margin-bottom: 0;
+        color: white;
+        font-size: 27px;
+        font-weight: 820;
+        line-height: 1.25;
+        word-break: keep-all;
+      }
+
+      section { padding: 104px 0; }
+
+      .section-head {
+        display: grid;
+        grid-template-columns: 0.45fr 1fr;
+        gap: 48px;
+        margin-bottom: 48px;
+      }
+
+      .kicker {
+        color: var(--forest);
+        font-size: 13px;
+        font-weight: 900;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      h2 {
+        margin-bottom: 18px;
+        font-size: clamp(34px, 5vw, 58px);
+        line-height: 1.08;
+        letter-spacing: -0.04em;
+        word-break: keep-all;
+      }
+
+      .section-copy {
+        max-width: 720px;
+        margin-bottom: 0;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.75;
+        word-break: keep-all;
+      }
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+      }
+
+      .flow-step {
+        position: relative;
+        min-height: 210px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--card);
+      }
+
+      .flow-step:not(:last-child)::after {
+        content: "→";
+        position: absolute;
+        top: 50%;
+        right: -21px;
+        z-index: 2;
+        display: grid;
+        width: 30px;
+        height: 30px;
+        place-items: center;
+        border: 1px solid var(--line);
+        border-radius: 50%;
+        color: var(--forest);
+        background: var(--paper);
+        font-weight: 900;
+      }
+
+      .step-no {
+        color: var(--forest);
+        font-size: 12px;
+        font-weight: 900;
+      }
+
+      .flow-step h3 { margin: 34px 0 10px; font-size: 21px; }
+      .flow-step p { margin: 0; color: var(--muted); line-height: 1.65; }
+
+      .dark {
+        color: white;
+        background: var(--forest-dark);
+      }
+
+      .dark .kicker { color: var(--mint); }
+      .dark h2 { color: white; }
+      .dark .section-copy { color: #bcd0c8; }
+
+      .ownership {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 16px;
+      }
+
+      .ownership article {
+        min-height: 236px;
+        padding: 30px;
+        border: 1px solid rgba(191, 240, 216, 0.18);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.055);
+      }
+
+      .ownership .num { color: var(--lime); font-size: 13px; font-weight: 900; }
+      .ownership h3 { margin: 34px 0 12px; font-size: 24px; }
+      .ownership p { margin: 0; color: #bcd0c8; line-height: 1.7; word-break: keep-all; }
+
+      .decisions {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .decision {
+        padding: 28px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.72);
+      }
+
+      .decision .label { color: var(--forest); font-size: 12px; font-weight: 900; letter-spacing: 0.08em; }
+      .decision h3 { margin: 18px 0 10px; font-size: 23px; line-height: 1.35; word-break: keep-all; }
+      .decision p { margin: 0; color: var(--muted); line-height: 1.75; word-break: keep-all; }
+
+      .timeline { border-top: 1px solid var(--line); }
+
+      .week {
+        display: grid;
+        grid-template-columns: 90px 1fr auto;
+        align-items: start;
+        gap: 26px;
+        padding: 26px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .week-no { color: var(--forest); font-size: 13px; font-weight: 900; }
+      .week h3 { margin: 0 0 7px; font-size: 20px; }
+      .week p { margin: 0; color: var(--muted); line-height: 1.65; word-break: keep-all; }
+      .week a { color: var(--forest); font-size: 14px; font-weight: 850; white-space: nowrap; }
+
+      .closing {
+        margin: 24px 0 104px;
+        padding: 54px;
+        border-radius: 26px;
+        background: linear-gradient(125deg, var(--mint), var(--lime));
+      }
+
+      .closing h2 { max-width: 760px; margin-bottom: 16px; }
+      .closing p { max-width: 720px; color: #2e5245; font-size: 18px; line-height: 1.7; word-break: keep-all; }
+      .closing .actions { margin-top: 28px; }
+
+      footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 30px 0 48px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      @media (max-width: 860px) {
+        .hero { grid-template-columns: 1fr; gap: 42px; padding-top: 64px; }
+        .signal-card { min-height: 300px; }
+        .section-head { grid-template-columns: 1fr; gap: 14px; }
+        .flow { grid-template-columns: repeat(2, 1fr); }
+        .flow-step:not(:last-child)::after { display: none; }
+      }
+
+      @media (max-width: 620px) {
+        .shell { width: min(100% - 28px, 1120px); }
+        header { min-height: 64px; }
+        nav a:not(:first-child) { display: none; }
+        .hero { min-height: auto; padding: 64px 0 84px; }
+        h1 { font-size: clamp(52px, 20vw, 76px); }
+        section { padding: 76px 0; }
+        .flow, .ownership, .decisions { grid-template-columns: 1fr; }
+        .week { grid-template-columns: 56px 1fr; gap: 12px; }
+        .week a { grid-column: 2; }
+        .closing { margin-bottom: 76px; padding: 34px 24px; }
+        footer { flex-direction: column; }
+      }
+    </style>
+  </head>
+  <body>
+    <a class="skip-link" href="#content">본문으로 이동</a>
+    <header class="shell">
+      <a class="brand" href="/">Hellpython</a>
+      <nav aria-label="페이지 탐색">
+        <a href="#contribution">기여</a>
+        <a href="#decisions">설계 판단</a>
+        <a href="#notes">Tech Notes</a>
+      </nav>
+    </header>
+
+    <main id="content">
+      <div class="shell hero">
+        <div>
+          <div class="eyebrow">
+            <span class="pill">ABC 프로젝트 멘토링 1기</span>
+            <span class="pill">2026.04–05</span>
+            <span class="pill">Backend &amp; Database</span>
+          </div>
+          <h1>Eco<br>Warden</h1>
+          <p class="hero-copy">
+            LiDAR가 감지한 무단투기 이벤트를 받아 검증하고, 변경 이력을 보존하며,
+            대시보드까지 실시간으로 전달하는 데이터 파이프라인을 만들었습니다.
+          </p>
+          <div class="actions">
+            <a class="button" href="#contribution">내가 맡은 일</a>
+            <a class="button secondary" href="https://api.ecowarden.systems/wisoft-fighting">Live API 문서</a>
+          </div>
+        </div>
+        <aside class="signal-card" aria-label="프로젝트 핵심 요약">
+          <span class="signal" aria-hidden="true"></span>
+          <div>
+            <strong>My responsibility</strong>
+            <p>센서 이벤트가<br>신뢰할 수 있는 기록이 될 때까지.</p>
+          </div>
+        </aside>
+      </div>
+
+      <section class="shell" aria-labelledby="flow-title">
+        <div class="section-head">
+          <div class="kicker">End-to-end flow</div>
+          <div>
+            <h2 id="flow-title">감지에서 기록과 알림까지</h2>
+            <p class="section-copy">
+              팀의 LiDAR 감지 결과와 Unity 시각화 사이에서 데이터 계약, 저장 규칙,
+              실시간 전달을 연결하는 역할을 맡았습니다.
+            </p>
+          </div>
+        </div>
+        <div class="flow" aria-label="EcoWarden 데이터 흐름">
+          <article class="flow-step">
+            <span class="step-no">01</span>
+            <h3>LiDAR Event</h3>
+            <p>객체·사람 좌표와 판정 결과, 이미지 증거를 JSON payload로 전달합니다.</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-no">02</span>
+            <h3>FastAPI</h3>
+            <p>Pydantic model로 입력을 검증하고 이미지·시간 데이터를 저장 형식으로 정제합니다.</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-no">03</span>
+            <h3>PostgreSQL</h3>
+            <p>PostGIS 위치 색인과 append-only 규칙으로 이벤트와 정정 이력을 보존합니다.</p>
+          </article>
+          <article class="flow-step">
+            <span class="step-no">04</span>
+            <h3>WebSocket</h3>
+            <p>새 이벤트를 연결된 클라이언트에 전달해 대시보드와 Unity 시각화를 갱신합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <div class="dark">
+        <section class="shell" id="contribution" aria-labelledby="contribution-title">
+          <div class="section-head">
+            <div class="kicker">What I owned</div>
+            <div>
+              <h2 id="contribution-title">Backend와 Database를 책임졌습니다</h2>
+              <p class="section-copy">
+                보고서와 8주간의 Tech Note에 반복해서 남은 담당 범위를 기준으로 정리했습니다.
+              </p>
+            </div>
+          </div>
+          <div class="ownership">
+            <article>
+              <span class="num">01 / API CONTRACT</span>
+              <h3>입력 규약과 수신 API</h3>
+              <p>DumpingEvent와 DepartureEvent의 Pydantic model을 정의하고, FastAPI endpoint와 Swagger 문서로 팀 간 payload 규약을 맞췄습니다.</p>
+            </article>
+            <article>
+              <span class="num">02 / PERSISTENCE</span>
+              <h3>Append-only 저장 구조</h3>
+              <p>UPDATE·DELETE를 제한하고 정정은 새 row와 invalidated_by 관계로 남기는 구조를 설계했습니다. 프로젝트 범위에서 차단 동작을 직접 확인했습니다.</p>
+            </article>
+            <article>
+              <span class="num">03 / DATA PIPELINE</span>
+              <h3>이미지·시간·위치 정제</h3>
+              <p>base64 이미지는 파일로 분리하고 DB에는 경로를 저장했습니다. timestamp를 표준화하고 PostGIS로 위치 조회 기반을 만들었습니다.</p>
+            </article>
+            <article>
+              <span class="num">04 / REAL TIME</span>
+              <h3>실시간 전달과 연결 관리</h3>
+              <p>WebSocket heartbeat를 비동기 task로 분리하고, 중복 전송과 끊김 문제를 줄인 뒤 센서→DB→화면 E2E 흐름을 점검했습니다.</p>
+            </article>
+          </div>
+        </section>
+      </div>
+
+      <section class="shell" id="decisions" aria-labelledby="decisions-title">
+        <div class="section-head">
+          <div class="kicker">Engineering decisions</div>
+          <div>
+            <h2 id="decisions-title">구현보다 오래 남은 판단</h2>
+            <p class="section-copy">
+              문제가 생겼을 때 단순히 우회하지 않고, 데이터의 의미와 실패 방식을 먼저 정했습니다.
+            </p>
+          </div>
+        </div>
+        <div class="decisions">
+          <article class="decision">
+            <span class="label">CORRECTION ≠ MUTATION</span>
+            <h3>기존 증거를 고치는 대신 정정 이벤트를 추가</h3>
+            <p>append-only 정책과 운영상 정정 요구를 함께 만족시키기 위해 원본을 유지하고 새 기록이 이전 기록을 무효화하도록 연결했습니다.</p>
+          </article>
+          <article class="decision">
+            <span class="label">STORE REFERENCES</span>
+            <h3>무거운 이미지와 검색할 metadata를 분리</h3>
+            <p>base64 문자열을 파일로 디코딩하고 DB에는 접근 경로를 남겨, 관계형 DB가 이벤트 조회와 무결성에 집중하도록 했습니다.</p>
+          </article>
+          <article class="decision">
+            <span class="label">COORDINATE SEMANTICS</span>
+            <h3>센서 평면 좌표와 지리 좌표의 의미를 구분</h3>
+            <p>LiDAR 좌표를 실제 위·경도로 단정하지 않고 프로젝트 좌표계로 저장했습니다. 지도 변환은 별도 시각화 metadata의 책임으로 분리했습니다.</p>
+          </article>
+          <article class="decision">
+            <span class="label">VERIFY THE WHOLE PATH</span>
+            <h3>개별 API 성공보다 E2E 흐름을 검증</h3>
+            <p>image_data와 image_base64 불일치처럼 경계에서 생기는 결함을 찾기 위해 수신, INSERT, broadcast, 화면 표시를 한 흐름으로 반복 확인했습니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="shell" id="notes" aria-labelledby="notes-title">
+        <div class="section-head">
+          <div class="kicker">8-week Tech Notes</div>
+          <div>
+            <h2 id="notes-title">매주 남긴 작업 기록</h2>
+            <p class="section-copy">계획부터 통합 검증과 회고까지, 당시의 판단과 시행착오는 원문에서 확인할 수 있습니다.</p>
+          </div>
+        </div>
+        <div class="timeline">
+          <article class="week">
+            <span class="week-no">WEEK 01</span>
+            <div><h3>설계와 역할 정의</h3><p>Spec 기반 협업 흐름을 익히고 Backend·Database 담당 범위를 정했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/1">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 02</span>
+            <div><h3>격리된 PostGIS 개발 환경</h3><p>sudo가 없는 서버에서 Docker Compose로 DB를 구성하고 SSH tunnel로 확인했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/2">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 03</span>
+            <div><h3>시계열 분할과 append-only 규칙</h3><p>시간 기반 partition, 역할별 권한, 변경 제한 trigger와 알림 기반을 설계했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/3">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 04</span>
+            <div><h3>FastAPI 데이터 계약</h3><p>Pydantic model, POST endpoint, Union payload와 Swagger UI로 입력 규약을 맞췄습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/4">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 05</span>
+            <div><h3>저장 계층과 실패 방식</h3><p>constant-time 인증 값 비교, 이미지 분리 저장, timestamp 정제, asyncpg pool과 fail-fast를 적용했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/5">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 06</span>
+            <div><h3>WebSocket과 정정 이력</h3><p>heartbeat와 event sourcing을 적용하고 DTO 불일치와 중복 전송 문제를 추적했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/6">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 07</span>
+            <div><h3>최종 E2E 검증</h3><p>센서 수신부터 화면 표시까지 전체 경로를 재검증하고 발표 자료를 동작 중심으로 정리했습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/7">원문 읽기 ↗</a>
+          </article>
+          <article class="week">
+            <span class="week-no">WEEK 08</span>
+            <div><h3>완벽함보다 복구 가능한 시스템</h3><p>팀을 연결하는 Backend의 역할과 실패해도 안전하게 회복하는 구조의 가치를 돌아봤습니다.</p></div>
+            <a href="https://ecowarden.tistory.com/8">원문 읽기 ↗</a>
+          </article>
+        </div>
+      </section>
+
+      <aside class="shell closing" aria-labelledby="closing-title">
+        <h2 id="closing-title">결과보다 과정이 보이는 프로젝트 기록</h2>
+        <p>
+          EcoWarden은 센서, 서버, DB, 시각화가 하나의 흐름으로 맞물려야 완성되는 팀 프로젝트였습니다.
+          이 경험을 통해 “고장 나지 않는 시스템”보다 “문제가 생겨도 기록을 잃지 않고 원인을 찾을 수 있는 시스템”을 먼저 생각하게 됐습니다.
+        </p>
+        <div class="actions">
+          <a class="button" href="https://ecowarden.tistory.com/">Tech Note 전체 보기</a>
+          <a class="button secondary" href="https://api.ecowarden.systems/wisoft-fighting">Swagger UI 열기</a>
+        </div>
+      </aside>
+    </main>
+
+    <footer class="shell">
+      <span>© 2026 Hellpython</span>
+      <a href="/">Dev Log로 돌아가기</a>
+    </footer>
+  </body>
+</html>
