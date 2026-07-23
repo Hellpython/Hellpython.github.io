@@ -1,0 +1,436 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="한 주의 개발 과정과 판단, 검증 결과를 남기는 Hellpython의 Weekly Dev Log 템플릿입니다.">
+    <title>Weekly Dev Log · Hellpython</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #d8dee9;
+        --paper: #f8fafc;
+        --surface: rgba(255, 255, 255, 0.8);
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+        --soft: rgba(15, 118, 110, 0.08);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
+      }
+
+      a {
+        color: var(--accent-dark);
+        font-weight: 750;
+      }
+
+      button {
+        font: inherit;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(15, 118, 110, 0.35);
+        outline-offset: 3px;
+      }
+
+      main {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 96px;
+      }
+
+      .back-link {
+        display: inline-flex;
+        margin-bottom: 64px;
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        gap: 22px;
+        padding-bottom: 56px;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.74);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 800px;
+        font-size: clamp(44px, 8vw, 76px);
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+      }
+
+      .lead {
+        max-width: 720px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.75;
+      }
+
+      .status-note {
+        width: fit-content;
+        padding: 10px 13px;
+        border-radius: 10px;
+        color: var(--accent-dark);
+        background: var(--soft);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      .section {
+        display: grid;
+        gap: 24px;
+        padding-top: 52px;
+        margin-top: 52px;
+        border-top: 1px solid var(--line);
+        scroll-margin-top: 24px;
+      }
+
+      .section-heading {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section h2 {
+        font-size: clamp(30px, 4vw, 42px);
+        letter-spacing: -0.025em;
+      }
+
+      .section-heading p,
+      .principles li {
+        color: var(--muted);
+        font-size: 17px;
+        line-height: 1.75;
+      }
+
+      .rhythm-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+      }
+
+      .rhythm-card {
+        display: grid;
+        gap: 12px;
+        min-height: 170px;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .rhythm-card span {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 850;
+        letter-spacing: 0.04em;
+      }
+
+      .rhythm-card h3 {
+        font-size: 21px;
+      }
+
+      .rhythm-card p {
+        color: var(--muted);
+        font-size: 15px;
+        line-height: 1.65;
+      }
+
+      .template-card {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: var(--surface);
+      }
+
+      .template-toolbar {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .template-toolbar strong {
+        font-size: 15px;
+      }
+
+      .copy-button {
+        min-height: 40px;
+        padding: 0 14px;
+        border: 1px solid var(--accent);
+        border-radius: 9px;
+        color: #ffffff;
+        background: var(--accent);
+        font-size: 14px;
+        font-weight: 850;
+        cursor: pointer;
+      }
+
+      .copy-actions {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .copy-status {
+        color: var(--accent-dark);
+        font-size: 13px;
+        font-weight: 800;
+      }
+
+      .template-text {
+        display: block;
+        width: 100%;
+        min-height: 820px;
+        margin: 0;
+        padding: 24px;
+        resize: vertical;
+        border: 0;
+        border-radius: 0 0 18px 18px;
+        color: #dbeafe;
+        background: #172033;
+        font: 14px/1.75 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+        white-space: pre;
+        tab-size: 2;
+      }
+
+      .template-text:focus-visible {
+        outline-offset: -4px;
+      }
+
+      .principles {
+        display: grid;
+        gap: 12px;
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .principles strong {
+        color: var(--ink);
+      }
+
+      .safety-note {
+        padding: 18px 20px;
+        border-left: 4px solid var(--accent);
+        color: var(--accent-dark);
+        background: var(--soft);
+        line-height: 1.7;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 28px, 920px);
+          padding-top: 28px;
+          padding-bottom: 64px;
+        }
+
+        .back-link {
+          margin-bottom: 44px;
+        }
+
+        .rhythm-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .rhythm-card {
+          min-height: 0;
+        }
+
+        .template-text {
+          min-height: 760px;
+          padding: 18px;
+          font-size: 13px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <a class="back-link" href="/">← Dev Log로 돌아가기</a>
+
+      <header class="hero">
+        <div class="eyebrow">Weekly Dev Log</div>
+        <h1>한 주의 일을<br>다음 주의 자산으로.</h1>
+        <p class="lead">
+          무엇을 했는지만 나열하지 않고, 문제를 어떻게 이해했고 왜 그렇게 해결했는지,
+          실제로 무엇을 검증했는지 매주 짧게 남깁니다.
+        </p>
+        <p class="status-note">템플릿 준비됨 · 첫 기록은 실제 한 주의 내용으로 작성합니다.</p>
+      </header>
+
+      <section class="section" aria-labelledby="rhythm-title">
+        <div class="section-heading">
+          <h2 id="rhythm-title">10분 기록 순서</h2>
+          <p>일요일에 아래 세 단계만 채워도 다음 작업을 시작할 맥락이 남습니다.</p>
+        </div>
+        <div class="rhythm-grid">
+          <article class="rhythm-card">
+            <span>01 · CAPTURE</span>
+            <h3>한 일을 적기</h3>
+            <p>완료한 기능, 공부한 주제, 읽은 자료를 구체적인 결과와 함께 적습니다.</p>
+          </article>
+          <article class="rhythm-card">
+            <span>02 · EXPLAIN</span>
+            <h3>판단을 설명하기</h3>
+            <p>문제의 원인, 선택한 방법, 제외한 대안을 짧게 설명합니다.</p>
+          </article>
+          <article class="rhythm-card">
+            <span>03 · VERIFY</span>
+            <h3>근거와 다음 일 남기기</h3>
+            <p>실행한 검증과 남은 위험을 기록하고 다음 주 첫 행동을 정합니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" id="template" aria-labelledby="template-title">
+        <div class="section-heading">
+          <h2 id="template-title">주간 기록 템플릿</h2>
+          <p>복사한 뒤 사실에 맞지 않는 항목은 지우고, 필요한 만큼만 작성합니다.</p>
+        </div>
+        <div class="template-card">
+          <div class="template-toolbar">
+            <strong>weekly-log.md</strong>
+            <span class="copy-actions">
+              <span class="copy-status" role="status" aria-live="polite"></span>
+              <button class="copy-button" type="button" aria-controls="weekly-template">Markdown 복사</button>
+            </span>
+          </div>
+          <textarea class="template-text" id="weekly-template" readonly spellcheck="false" aria-label="주간 개발 기록 Markdown 템플릿"># YYYY년 MM월 N주차
+
+- 기간: YYYY.MM.DD ~ YYYY.MM.DD
+- 이번 주 초점:
+
+## 이번 주 한 일
+
+- [ ] 구현하거나 수정한 것
+- [ ] 공부하고 정리한 것
+- [ ] 확인하거나 검증한 것
+
+## 문제와 원인
+
+### 문제 1
+
+- 상황:
+- 처음 예상:
+- 실제로 확인한 내용:
+- 원인:
+
+## 선택한 해결 방법
+
+- 선택:
+- 선택한 이유:
+- 고려한 대안:
+- 대안을 선택하지 않은 이유:
+
+## 검증 결과
+
+- 검증 방법 또는 command:
+- 결과:
+- 확인하지 못한 항목:
+- 남은 위험:
+
+## 배운 점
+
+- 다시 기억할 개념:
+- 다음에 다르게 할 점:
+
+## 다음 주 할 일
+
+- [ ] 가장 먼저 할 일
+- [ ] 이어서 할 일
+
+## 한 줄 회고
+
+이번 주를 한 문장으로 정리합니다.</textarea>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="principles-title">
+        <div class="section-heading">
+          <h2 id="principles-title">작성 원칙</h2>
+          <p>나중의 내가 읽고 바로 작업을 이어갈 수 있는 정도면 충분합니다.</p>
+        </div>
+        <ol class="principles">
+          <li><strong>결과보다 판단을 남깁니다.</strong> 무엇을 왜 선택했는지가 다시 쓸 수 있는 기록입니다.</li>
+          <li><strong>검증을 구체적으로 적습니다.</strong> “잘 됨” 대신 확인한 화면, test, command와 결과를 남깁니다.</li>
+          <li><strong>모르는 것은 모른다고 적습니다.</strong> 미검증 항목과 남은 위험도 기록의 일부입니다.</li>
+          <li><strong>10분 안에 끝냅니다.</strong> 빈칸을 억지로 채우지 않고 다음 주에도 계속 쓰는 것을 우선합니다.</li>
+        </ol>
+        <p class="safety-note">
+          공개 전에는 password, API key, 개인정보, 내부 URL과 로그가 포함되지 않았는지 확인합니다.
+        </p>
+      </section>
+    </main>
+
+    <script>
+      (() => {
+        const button = document.querySelector(".copy-button");
+        const template = document.querySelector("#weekly-template");
+        const status = document.querySelector(".copy-status");
+
+        button.addEventListener("click", async () => {
+          let copied = false;
+
+          if (navigator.clipboard && window.isSecureContext) {
+            try {
+              await navigator.clipboard.writeText(template.value);
+              copied = true;
+            } catch {
+              copied = false;
+            }
+          }
+
+          if (!copied) {
+            template.focus();
+            template.select();
+            copied = document.execCommand("copy");
+          }
+
+          status.textContent = copied ? "복사 완료" : "선택됨 · 직접 복사";
+        });
+      })();
+    </script>
+  </body>
+</html>
