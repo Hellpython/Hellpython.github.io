@@ -1,0 +1,50 @@
+name: Sync latest blog posts
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-latest-blog-posts
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Test sync logic
+        run: python -m unittest discover -s tests -p "test_*.py"
+
+      - name: Download Tistory RSS
+        run: >-
+          curl --fail --silent --show-error --location --max-time 30
+          https://lessontutor.tistory.com/rss
+          --output /tmp/lessontutor-rss.xml
+
+      - name: Sync Tistory RSS
+        run: python scripts/sync_blog.py --rss-file /tmp/lessontutor-rss.xml
+
+      - name: Validate generated diff
+        run: git diff --check
+
+      - name: Commit changed posts
+        run: |
+          if git diff --quiet; then
+            echo "No new blog posts"
+            exit 0
+          fi
+          git config user.name "Hellpython"
+          git config user.email "$(git log -1 --format=%ae)"
+          git add index.html data/blog-posts.json
+          git commit -m "Sync latest blog posts"
+          git push
