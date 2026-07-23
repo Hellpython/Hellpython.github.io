@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="영어, JavaScript prototype·strict mode 세미나, Codetree 학습과 SQLD 미진행 상태를 남긴 2026년 7월 23일 Daily Log입니다.">
+    <title>2026.07.23 Daily Log · Hellpython</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #d8dee9;
+        --paper: #f8fafc;
+        --surface: rgba(255, 255, 255, 0.82);
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+        --soft: rgba(15, 118, 110, 0.08);
+        --pending: #92400e;
+        --pending-soft: rgba(217, 119, 6, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
+      }
+
+      a {
+        color: var(--accent-dark);
+        font-weight: 750;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(15, 118, 110, 0.35);
+        outline-offset: 3px;
+      }
+
+      main {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 96px;
+      }
+
+      .log-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        margin-bottom: 64px;
+      }
+
+      .log-nav a {
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        gap: 20px;
+        padding-bottom: 20px;
+      }
+
+      .eyebrow,
+      .tag {
+        width: fit-content;
+        border-radius: 999px;
+        font-weight: 800;
+      }
+
+      .eyebrow {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.74);
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 820px;
+        font-size: clamp(42px, 7.4vw, 72px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+
+      .lead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.75;
+      }
+
+      .section {
+        display: grid;
+        gap: 24px;
+        padding-top: 52px;
+        margin-top: 52px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section h2 {
+        font-size: clamp(30px, 4vw, 42px);
+        letter-spacing: -0.025em;
+      }
+
+      .section-heading p,
+      .prose,
+      li {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.75;
+      }
+
+      .summary-grid,
+      .metric-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .card h3 {
+        font-size: 20px;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        color: var(--accent-dark);
+        background: var(--soft);
+        font-size: 12px;
+      }
+
+      .tag.pending {
+        color: var(--pending);
+        background: var(--pending-soft);
+      }
+
+      .metric {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 25px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .expression-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .expression-group {
+        display: grid;
+        gap: 12px;
+      }
+
+      .expression-group h3 {
+        font-size: 17px;
+      }
+
+      .expression-list li {
+        padding: 8px 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.72);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .note {
+        padding: 18px 20px;
+        border-left: 4px solid var(--accent);
+        color: var(--accent-dark);
+        background: var(--soft);
+        line-height: 1.7;
+      }
+
+      .note.pending {
+        border-left-color: #d97706;
+        color: var(--pending);
+        background: var(--pending-soft);
+      }
+
+      .learning-list,
+      .next-list {
+        display: grid;
+        gap: 10px;
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .learning-list strong,
+      .next-list strong {
+        color: var(--ink);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      table {
+        width: 100%;
+        min-width: 620px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      td {
+        font-size: 15px;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .reflection {
+        font-size: clamp(21px, 3vw, 28px);
+        font-weight: 800;
+        line-height: 1.55;
+        letter-spacing: -0.015em;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 28px, 920px);
+          padding-top: 28px;
+          padding-bottom: 64px;
+        }
+
+        .log-nav {
+          margin-bottom: 44px;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metric-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+          padding: 19px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav class="log-nav" aria-label="Daily Log 이동">
+        <a href="/daily/">← Daily 목록</a>
+        <a href="/">Dev Log 홈 →</a>
+      </nav>
+
+      <header class="hero">
+        <div class="eyebrow">2026.07.23 · Daily Log</div>
+        <h1>영어·JavaScript 세미나·Codetree</h1>
+        <p class="lead">
+          Quiz 점수와 실제 암기 상태를 구분하고, prototype과 strict mode 실습,
+          Codetree Lesson 2 완료 범위, SQLD 미진행 상태를 사실대로 남겼습니다.
+        </p>
+      </header>
+
+      <section class="section" aria-labelledby="summary-title">
+        <div class="section-heading">
+          <h2 id="summary-title">오늘 한눈에 보기</h2>
+          <p>완료한 범위와 미진행 항목을 분리했습니다.</p>
+        </div>
+        <div class="summary-grid">
+          <article class="card">
+            <span class="tag">ENGLISH</span>
+            <h3>업무 기초 표현 11개</h3>
+            <p>Quiz 5/5를 기록했지만 암기 완료는 0개입니다. 2026.07.24에 다시 복습합니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag">SEMINAR</span>
+            <h3>19장 prototype · 20장 strict mode</h3>
+            <p>객체가 기능을 공유하는 구조와 strict mode가 바꾸는 실행 동작을 실습했습니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag">CODETREE</span>
+            <h3>Lesson 2 · 변수와 자료형 100%</h3>
+            <p>사진 기준 Easy 3문제를 완료했습니다. 합계 6분, 30 XP입니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag pending">NOT STARTED</span>
+            <h3>SQLD</h3>
+            <p>오늘은 학습하지 못했습니다. 완료로 처리하지 않고 다음 학습 항목으로 넘깁니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="english-title">
+        <div class="section-heading">
+          <h2 id="english-title">English</h2>
+          <p>목표 TOEIC 750 · 기초 진단 2.5/10</p>
+        </div>
+        <div class="metric-grid" aria-label="영어 학습 지표">
+          <div class="metric"><strong>5/5</strong><span>오늘 Quiz · 100%</span></div>
+          <div class="metric"><strong>0</strong><span>암기 완료</span></div>
+          <div class="metric"><strong>5</strong><span>헷갈림</span></div>
+          <div class="metric"><strong>6</strong><span>모름</span></div>
+        </div>
+        <div class="expression-group">
+          <h3>업무 기초 단어·표현 8개</h3>
+          <ul class="expression-list" aria-label="업무 기초 단어와 표현 8개">
+            <li>submit a report</li>
+            <li>postpone a meeting</li>
+            <li>confirm a reservation</li>
+            <li>approve a request</li>
+            <li>complete a form</li>
+            <li>provide information</li>
+            <li>receive an email</li>
+            <li>apply for a position</li>
+          </ul>
+        </div>
+        <div class="expression-group">
+          <h3>Phrase / Collocation 3개</h3>
+          <ul class="expression-list" aria-label="Phrase와 Collocation 3개">
+            <li>be responsible for</li>
+            <li>meet a deadline</li>
+            <li>be scheduled to</li>
+          </ul>
+        </div>
+        <p class="note">
+          5/5는 오늘 Quiz 결과입니다. 장기 기억을 확인한 결과가 아니므로 암기 완료는 0개로 유지합니다.
+          다음 복습일은 <strong>2026.07.24</strong>이며, 힌트 없이 뜻과 쓰임을 먼저 떠올려 봅니다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="seminar-title">
+        <div class="section-heading">
+          <h2 id="seminar-title">JavaScript 세미나</h2>
+          <p>
+            <a href="https://github.com/Hellpython/javascript-study">javascript-study</a>의
+            19장과 20장 실습을 진행했습니다.
+          </p>
+        </div>
+        <div class="summary-grid">
+          <article class="card">
+            <span class="tag">19 · PROTOTYPE</span>
+            <h3>기능은 공유하고 상태는 분리한다</h3>
+            <p>
+              instance별 상태는 각 객체가 가지며 method는 prototype을 통해 공유합니다.
+              property는 복사되는 것이 아니라 prototype chain을 따라 검색됩니다.
+            </p>
+          </article>
+          <article class="card">
+            <span class="tag">20 · STRICT MODE</span>
+            <h3>실수하기 쉬운 동작을 error로 바꾼다</h3>
+            <p>
+              암묵적 전역, 일반 함수의 this, arguments 연결 등 sloppy mode와의 차이를 확인했습니다.
+              class와 ES Module에는 strict mode가 자동 적용됩니다.
+            </p>
+          </article>
+        </div>
+        <ul class="learning-list">
+          <li><strong>용어 구분:</strong> prototype, [[Prototype]], __proto__, constructor는 서로 같은 말이 아닙니다.</li>
+          <li><strong>property 확인:</strong> inherited property와 own property를 구분하고, shadowing과 삭제 후 검색 변화를 살펴봤습니다.</li>
+          <li><strong>도구의 역할:</strong> strict mode는 ESLint, TypeScript, test를 대신하지 않습니다. 각 도구는 다른 단계의 문제를 확인합니다.</li>
+          <li><strong>보안 연결:</strong> prototype pollution은 공유 prototype의 변경이 property 검색과 권한 판단에 영향을 줄 수 있는 사례입니다.</li>
+        </ul>
+        <p class="note pending">
+          남은 질문: callback의 receiver를 다룰 때 bind·arrow function·class field 중 무엇을 선택할지,
+          Object.create(null)과 Map의 실제 선택 기준, 경계를 넘는 값의 type을 어떻게 검사할지 더 확인합니다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="codetree-title">
+        <div class="section-heading">
+          <h2 id="codetree-title">Codetree</h2>
+          <p>Trail 1 · Lesson 2 “변수와 자료형”을 100% 완료했습니다.</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Codetree 완료 문제 표" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th>단계</th>
+                <th>문제</th>
+                <th>시간</th>
+                <th>XP</th>
+                <th>난이도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>기본 문제</td>
+                <td>정수 선언하고 뺄셈</td>
+                <td>2m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+              <tr>
+                <td>연습 문제</td>
+                <td>변수 선언하기</td>
+                <td>2m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+              <tr>
+                <td>테스트 문제</td>
+                <td>정수 선언하고 곱 출력</td>
+                <td>2m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="prose">
+          오늘 확인 가능한 범위는 변수 선언과 정수의 뺄셈·곱셈 출력까지입니다.
+          사진에 표시된 세 문제의 합계는 6분, 30 XP입니다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="next-title">
+        <div class="section-heading">
+          <h2 id="next-title">다음 행동</h2>
+          <p>내일 다시 시작할 때 먼저 확인할 항목입니다.</p>
+        </div>
+        <ul class="next-list">
+          <li><strong>English:</strong> 2026.07.24에 11개 표현을 힌트 없이 회상하고 헷갈림·모름을 다시 분류합니다.</li>
+          <li><strong>SQLD:</strong> 오늘 미진행한 사실을 출발점으로 삼아 다음 학습 단위를 정하고 시작합니다.</li>
+          <li><strong>JavaScript:</strong> 세미나에서 남긴 선택 기준 질문 중 하나를 실제 code 사례로 확인합니다.</li>
+          <li><strong>Codetree:</strong> Trail 1의 다음 Lesson을 이어갑니다.</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="reflection-title">
+        <div class="section-heading">
+          <h2 id="reflection-title">한 줄 회고</h2>
+        </div>
+        <p class="reflection">
+          Quiz 정답과 암기를 구분하고, 완료한 범위와 하지 못한 SQLD까지 그대로 남겼다.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>

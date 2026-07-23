@@ -117,6 +117,40 @@
         font-weight: 800;
       }
 
+      .latest-card {
+        display: grid;
+        gap: 16px;
+        padding: 24px;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        color: var(--ink);
+        background: var(--surface);
+        text-decoration: none;
+        transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+      }
+
+      .latest-card:hover {
+        transform: translateY(-3px);
+        border-color: rgba(15, 118, 110, 0.45);
+        box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
+      }
+
+      .latest-card span {
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 850;
+      }
+
+      .latest-card h3 {
+        font-size: clamp(23px, 3vw, 30px);
+        line-height: 1.35;
+      }
+
+      .latest-card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
       .section {
         display: grid;
         gap: 24px;
@@ -290,6 +324,10 @@
         html {
           scroll-behavior: auto;
         }
+
+        .latest-card {
+          transition: none;
+        }
       }
     </style>
   </head>
@@ -309,6 +347,18 @@
         </p>
         <p class="status-note">템플릿 준비됨 · 실제 오늘의 내용만 짧게 작성합니다.</p>
       </header>
+
+      <section class="section" aria-labelledby="latest-title">
+        <div class="section-heading">
+          <h2 id="latest-title">최근 Daily</h2>
+          <p>작성한 기록을 날짜순으로 확인합니다.</p>
+        </div>
+        <a class="latest-card" href="/daily/2026-07-23/">
+          <span>2026.07.23 · DAILY LOG</span>
+          <h3>영어·JavaScript 세미나·Codetree</h3>
+          <p>TOEIC 표현 학습, prototype·strict mode 세미나, Codetree Lesson 2와 SQLD 미진행 상태를 기록했습니다.</p>
+        </a>
+      </section>
 
       <section class="section" aria-labelledby="rhythm-title">
         <div class="section-heading">
