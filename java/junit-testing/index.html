@@ -1,0 +1,518 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta
+      name="description"
+      content="JUnit Jupiter와 Mockito를 실습하며 확인한 테스트 실행 구조, 반복·매개변수 테스트, Extension, mock 검증을 정리한 학습 기록입니다."
+    >
+    <title>JUnit 실습에서 무엇을 검증했는가 · Hellpython</title>
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #d8dee9;
+        --paper: #f8fafc;
+        --surface: rgba(255, 255, 255, 0.84);
+        --accent: #0f766e;
+        --accent-dark: #115e59;
+        --soft: rgba(15, 118, 110, 0.08);
+        --warning: #92400e;
+        --warning-soft: rgba(217, 119, 6, 0.1);
+        --code: #17191f;
+        --code-text: #e5e7eb;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
+      }
+
+      a {
+        color: var(--accent-dark);
+        font-weight: 750;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(15, 118, 110, 0.35);
+        outline-offset: 3px;
+      }
+
+      main {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 96px;
+      }
+
+      .log-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        margin-bottom: 64px;
+      }
+
+      .log-nav a {
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        gap: 20px;
+        padding-bottom: 20px;
+      }
+
+      .eyebrow {
+        width: fit-content;
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.74);
+        font-size: 14px;
+        font-weight: 800;
+      }
+
+      h1,
+      h2,
+      h3,
+      p,
+      figure,
+      pre {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 840px;
+        font-size: clamp(42px, 7.4vw, 72px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+
+      .lead {
+        max-width: 780px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.75;
+      }
+
+      .meta {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .metric-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
+        margin-top: 24px;
+      }
+
+      .metric {
+        padding: 18px;
+        border-top: 2px solid var(--accent);
+        background: var(--surface);
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 28px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .section {
+        display: grid;
+        gap: 24px;
+        padding-top: 52px;
+        margin-top: 52px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section h2 {
+        font-size: clamp(30px, 4vw, 42px);
+        letter-spacing: -0.025em;
+      }
+
+      .section-heading p,
+      .prose,
+      li,
+      figcaption {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.8;
+      }
+
+      .prose strong,
+      li strong {
+        color: var(--ink);
+      }
+
+      .practice-list,
+      .evidence-list {
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .practice-list li + li,
+      .evidence-list li + li {
+        margin-top: 12px;
+      }
+
+      .shot {
+        display: grid;
+        gap: 12px;
+      }
+
+      .shot img {
+        width: 100%;
+        height: auto;
+        border: 1px solid var(--line);
+        background: #111827;
+      }
+
+      pre {
+        overflow-x: auto;
+        padding: 22px;
+        border-radius: 8px;
+        color: var(--code-text);
+        background: var(--code);
+        font: 14px/1.7 ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      code {
+        font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .timeline {
+        display: grid;
+        gap: 0;
+        border-top: 1px solid var(--line);
+      }
+
+      .timeline-row {
+        display: grid;
+        grid-template-columns: 92px 180px minmax(0, 1fr);
+        gap: 20px;
+        padding: 20px 0;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .timeline-row time {
+        color: var(--accent);
+        font: 700 14px ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      }
+
+      .timeline-row strong {
+        font-size: 17px;
+      }
+
+      .timeline-row span {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .callout {
+        padding: 22px 24px;
+        border-left: 4px solid var(--accent);
+        background: var(--soft);
+        font-size: 18px;
+        font-weight: 750;
+        line-height: 1.7;
+      }
+
+      .callout.warning {
+        border-left-color: var(--warning);
+        background: var(--warning-soft);
+      }
+
+      .result-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 24px;
+      }
+
+      .result-column {
+        min-width: 0;
+      }
+
+      .result-column h3 {
+        margin-bottom: 14px;
+        font-size: 21px;
+      }
+
+      footer {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 12px;
+        padding-top: 52px;
+        margin-top: 64px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      @media (max-width: 700px) {
+        main {
+          width: min(100% - 28px, 920px);
+          padding-top: 24px;
+        }
+
+        .log-nav {
+          margin-bottom: 46px;
+        }
+
+        .metric-grid,
+        .result-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .timeline-row {
+          grid-template-columns: 72px 1fr;
+        }
+
+        .timeline-row span {
+          grid-column: 2;
+        }
+
+        pre {
+          padding: 18px;
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <nav class="log-nav" aria-label="페이지 이동">
+        <a href="/">← Hellpython</a>
+        <a href="/#records">전체 기록</a>
+      </nav>
+
+      <header class="hero">
+        <span class="eyebrow">Java · Testing</span>
+        <h1>JUnit 실습에서<br>무엇을 검증했는가</h1>
+        <p class="lead">
+          Java 테스트 기초를 따라 치며 익힌 문법만 나열하지 않고,
+          실제로 실행한 범위와 막혔던 지점, 아직 남은 과제를 함께 정리했다.
+        </p>
+        <p class="meta">2026.07.29 · JUnit Jupiter · Mockito · Gradle</p>
+
+        <div class="metric-grid" aria-label="실습 결과 요약">
+          <div class="metric">
+            <strong>19</strong>
+            <span>재실행해 통과한 테스트</span>
+          </div>
+          <div class="metric">
+            <strong>4</strong>
+            <span>확인한 테스트 주제</span>
+          </div>
+          <div class="metric">
+            <strong>1</strong>
+            <span>다음에 해결할 warning</span>
+          </div>
+        </div>
+      </header>
+
+      <section class="section" aria-labelledby="start-title">
+        <div class="section-heading">
+          <h2 id="start-title">출발점</h2>
+          <p>목표는 Java 문법을 완성하는 것이 아니라, 테스트 code가 어떤 구조로 실행되는지 직접 보는 것이었다.</p>
+        </div>
+        <p class="prose">
+          처음에는 <strong>테스트를 작성하면 assertion의 성공과 실패만 확인하면 된다</strong>고 생각했다.
+          실습을 진행하면서 테스트에는 실행 전후 lifecycle, 여러 입력을 다루는 방법,
+          느린 테스트를 감지하는 Extension, 협력 객체의 동작을 대신하는 mock까지 서로 다른 층이 있다는 것을 확인했다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="scope-title">
+        <div class="section-heading">
+          <h2 id="scope-title">직접 실행한 범위</h2>
+          <p>각 항목은 현재 저장소의 code와 Gradle test 결과로 다시 확인했다.</p>
+        </div>
+        <ol class="practice-list">
+          <li>
+            <strong>기본 test와 lifecycle</strong> —
+            <code>@Test</code>, <code>@DisplayName</code>, <code>@BeforeEach</code>,
+            <code>@AfterEach</code>, <code>@BeforeAll</code>, <code>@AfterAll</code>
+          </li>
+          <li>
+            <strong>여러 조건의 test</strong> —
+            <code>@RepeatedTest</code>로 10회 반복하고,
+            <code>@ParameterizedTest</code>와 <code>@CsvSource</code>로 입력을 바꿔 실행
+          </li>
+          <li>
+            <strong>분류와 확장</strong> —
+            <code>@FastTest</code>, <code>@SlowTest</code>를 합성 annotation으로 만들고,
+            <code>FindSlowTestExtension</code>에서 실행 시간을 측정
+          </li>
+          <li>
+            <strong>Mockito</strong> —
+            <code>given</code>으로 협력 객체의 응답을 준비하고,
+            <code>then(...).should()</code>로 호출 여부를 검증
+          </li>
+        </ol>
+
+        <pre><code>@RepeatedTest(
+    value = 10,
+    name = "{displayName}, {currentRepetition}/{totalRepetitions}"
+)
+void repeatTest(RepetitionInfo repetitionInfo) {
+    System.out.println(
+        "test" + repetitionInfo.getCurrentRepetition()
+        + "/" + repetitionInfo.getTotalRepetitions()
+    );
+}</code></pre>
+      </section>
+
+      <section class="section" aria-labelledby="result-title">
+        <div class="section-heading">
+          <h2 id="result-title">code와 실행 결과를 함께 남겼다</h2>
+          <p>최종 화면만으로 학습 과정 전체를 알 수는 없지만, 어떤 code가 어떤 결과를 만들었는지는 다시 확인할 수 있다.</p>
+        </div>
+        <figure class="shot">
+          <img
+            src="./junit-repeatedtest-code-results.png"
+            alt="IntelliJ에서 RepeatedTest code와 14개 StudyTest 통과 결과를 함께 보여 주는 화면"
+            width="1848"
+            height="1160"
+          >
+          <figcaption>
+            <code>StudyTest</code>의 반복·매개변수 test 14개가 통과한 화면.
+            전체 프로젝트에서는 CalculatorTest와 StudyServiceTest를 포함해 19개가 통과했다.
+          </figcaption>
+        </figure>
+      </section>
+
+      <section class="section" aria-labelledby="trouble-title">
+        <div class="section-heading">
+          <h2 id="trouble-title">가장 오래 막힌 곳은 test code 밖에 있었다</h2>
+          <p>테스트 내용보다 dependency와 runner가 먼저 문제였고, 실행 도구에 따라 결과가 보이는 방식도 달랐다.</p>
+        </div>
+
+        <div class="timeline" aria-label="JUnit troubleshooting 순서">
+          <div class="timeline-row">
+            <time datetime="2026-07-15T11:58">11:58</time>
+            <strong>실행 준비 실패</strong>
+            <span><code>junit-platform-launcher</code>를 찾지 못해 test가 시작되기 전에 중단됐다.</span>
+          </div>
+          <div class="timeline-row">
+            <time datetime="2026-07-15T15:58">15:58</time>
+            <strong>Gradle로 실행</strong>
+            <span>반복 test가 하나의 상위 항목과 여러 자식 결과로 표시됐다.</span>
+          </div>
+          <div class="timeline-row">
+            <time datetime="2026-07-15T16:02">16:02</time>
+            <strong>IntelliJ로 실행</strong>
+            <span><code>Run tests using</code>을 IntelliJ IDEA로 바꾸자 기대한 이름으로 결과를 볼 수 있었다.</span>
+          </div>
+        </div>
+
+        <figure class="shot">
+          <img
+            src="./intellij-runner-settings.png"
+            alt="IntelliJ Gradle 설정에서 Run tests using을 IntelliJ IDEA로 선택한 화면"
+            width="2048"
+            height="1566"
+          >
+          <figcaption>
+            같은 test code라도 누가 실행하고 결과를 전달하는지에 따라 IDE에서 보이는 구조가 달라질 수 있었다.
+          </figcaption>
+        </figure>
+
+        <p class="callout">
+          이 경험 뒤에는 test code만 보지 않고,
+          dependency → test engine → runner → 결과 표시 순서로 범위를 좁히게 됐다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="verify-title">
+        <div class="section-heading">
+          <h2 id="verify-title">2026년 7월 29일 다시 검증한 결과</h2>
+          <p>IDE의 이전 실행 표시가 아니라 Gradle task를 강제로 다시 실행했다.</p>
+        </div>
+
+        <pre><code>$ ./gradlew test --rerun-tasks
+BUILD SUCCESSFUL in 5s
+
+# build/test-results/test/TEST-*.xml 합산
+19 tests · 0 failures · 0 errors · 0 skipped</code></pre>
+
+        <p class="callout warning">
+          Mockito가 inline mock maker를 사용하기 위해 스스로 Java agent를 붙인다는 warning은 남아 있다.
+          현재 test는 통과하지만 future JDK에서는 agent 설정을 build에 명시해야 한다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="boundary-title">
+        <div class="section-heading">
+          <h2 id="boundary-title">확인된 것과 아직 남은 것</h2>
+          <p>통과한 test 수와 이해한 범위를 같은 의미로 취급하지 않았다.</p>
+        </div>
+
+        <div class="result-grid">
+          <div class="result-column">
+            <h3>지금 설명할 수 있는 것</h3>
+            <ul class="evidence-list">
+              <li>lifecycle callback이 test 전후에 실행되는 순서</li>
+              <li>반복·매개변수 test가 여러 실행 결과를 만드는 방식</li>
+              <li>Extension이 실행 시간을 관찰하고 경고를 남기는 방식</li>
+              <li>mock의 응답을 준비하고 interaction을 검증하는 기본 흐름</li>
+            </ul>
+          </div>
+          <div class="result-column">
+            <h3>다음에 정리할 것</h3>
+            <ul class="evidence-list">
+              <li>강의 실험과 유지할 test를 class 단위로 분리하기</li>
+              <li>중복된 Mockito stubbing과 예제 이름 정리하기</li>
+              <li>Mockito Java agent warning을 build 설정으로 해결하기</li>
+              <li>mock 중심 test와 실제 repository 통합 test의 경계 비교하기</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="takeaway-title">
+        <div class="section-heading">
+          <h2 id="takeaway-title">이번 실습에서 남은 기준</h2>
+        </div>
+        <p class="callout">
+          “test가 통과했다”에서 끝내지 않고,
+          무엇을 검증했고 무엇은 검증하지 않았는지 함께 설명할 수 있어야 한다.
+        </p>
+      </section>
+
+      <footer>
+        <span>© 2026 Hellpython · Java Testing Log</span>
+        <a href="/#records">다른 기록 보기</a>
+      </footer>
+    </main>
+  </body>
+</html>
