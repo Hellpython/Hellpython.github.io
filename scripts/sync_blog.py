@@ -19,6 +19,9 @@ from urllib.parse import urlparse
 
 RSS_URL = "https://lessontutor.tistory.com/rss"
 MAX_FEED_BYTES = 2_000_000
+TITLE_CORRECTIONS = {
+    "JavaScirpt": "JavaScript",
+}
 
 
 @dataclass(frozen=True)
@@ -56,6 +59,12 @@ CATEGORY_META = {
         "아직 별도 분야로 묶이지 않은 새로운 학습 기록입니다.",
     ),
 }
+
+
+def normalize_title(title: str) -> str:
+    for typo, correction in TITLE_CORRECTIONS.items():
+        title = title.replace(typo, correction)
+    return title
 
 
 def categorize(title: str, feed_categories: tuple[str, ...] = ()) -> str:
@@ -120,7 +129,7 @@ def parse_rss(payload: bytes) -> list[Post]:
     seen_links: set[str] = set()
 
     for item in root.findall(".//item"):
-        title = (item.findtext("title") or "").strip()
+        title = normalize_title((item.findtext("title") or "").strip())
         link = (item.findtext("link") or "").strip()
         pub_date = (item.findtext("pubDate") or "").strip()
         feed_categories = tuple(
@@ -234,7 +243,7 @@ def load_archive(path: Path) -> list[Post]:
             raise ValueError(f"unknown archived category: {item['category']}")
         posts.append(
             Post(
-                title=item["title"],
+                title=normalize_title(item["title"]),
                 link=item["link"],
                 published=datetime.fromisoformat(item["published"]),
                 category=item["category"],

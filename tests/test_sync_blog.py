@@ -10,6 +10,7 @@ from sync_blog import (  # noqa: E402
     Post,
     categorize,
     merge_posts,
+    normalize_title,
     parse_rss,
     render_recent,
     render_topics,
@@ -45,6 +46,11 @@ class SyncBlogTests(unittest.TestCase):
         self.assertEqual(categorize("MAC 주소와 IP 주소"), "network")
         self.assertEqual(categorize("Redis와 Valkey"), "backend")
         self.assertEqual(categorize("새로운 공부"), "other")
+
+    def test_known_title_typo_is_normalized(self):
+        self.assertEqual(normalize_title("[JavaScirpt] 변수"), "[JavaScript] 변수")
+        payload = SAMPLE_RSS.replace(b"Socket basics", b"[JavaScirpt] variables")
+        self.assertEqual(parse_rss(payload)[0].title, "[JavaScript] variables")
 
     def test_rss_is_sorted_and_deduplicated(self):
         posts = parse_rss(SAMPLE_RSS)
