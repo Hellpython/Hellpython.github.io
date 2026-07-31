@@ -5,22 +5,34 @@
   <link href="https://hellpython.github.io/"/>
   <link rel="self" href="https://hellpython.github.io/feed.xml"/>
   <id>https://hellpython.github.io/</id>
-  <updated>2026-07-29T00:00:00+09:00</updated>
+  <updated>2026-07-31T00:00:00+09:00</updated>
   <author><name>Hellpython</name></author>
 
+  <entry>
+    <title>Codetree Trail 1 · Chapter 2 Lesson 1까지 완료</title>
+    <link href="https://hellpython.github.io/codetree/"/>
+    <id>https://hellpython.github.io/codetree/#2026-07-31</id>
+    <updated>2026-07-31T00:00:00+09:00</updated>
+    <summary>정수 입력과 계산 결과 출력을 연습한 JavaScript 학습 기록.</summary>
+  </entry>
+  <entry>
+    <title>2026.07.31 Daily Log — 영어·Codetree</title>
+    <link href="https://hellpython.github.io/daily/2026-07-31/"/>
+    <id>https://hellpython.github.io/daily/2026-07-31/</id>
+    <updated>2026-07-31T00:00:00+09:00</updated>
+  </entry>
+  <entry>
+    <title>2026.07.30 Daily Log — 영어·Codetree</title>
+    <link href="https://hellpython.github.io/daily/2026-07-30/"/>
+    <id>https://hellpython.github.io/daily/2026-07-30/</id>
+    <updated>2026-07-30T00:00:00+09:00</updated>
+  </entry>
   <entry>
     <title>JUnit 실습에서 무엇을 검증했는가</title>
     <link href="https://hellpython.github.io/java/junit-testing/"/>
     <id>https://hellpython.github.io/java/junit-testing/</id>
     <updated>2026-07-29T00:00:00+09:00</updated>
     <summary>JUnit Jupiter와 Mockito를 직접 실행하며 확인한 범위, 막힌 지점, 다음 과제를 정리한 학습 기록.</summary>
-  </entry>
-  <entry>
-    <title>Codetree Trail 1 · Lesson 7까지 완료</title>
-    <link href="https://hellpython.github.io/codetree/"/>
-    <id>https://hellpython.github.io/codetree/#2026-07-29</id>
-    <updated>2026-07-29T00:00:00+09:00</updated>
-    <summary>정답뿐 아니라 처음 생각한 접근, 막힌 지점, 다시 기억할 내용을 함께 남기는 알고리즘 학습 기록.</summary>
   </entry>
   <entry>
     <title>2026.07.29 Daily Log — 영어·Codetree</title>

@@ -1,0 +1,517 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="TOEIC 주문·배송 표현과 Codetree JavaScript Trail 1 Chapter 2 Lesson 1 정수 입력 학습을 남긴 2026년 7월 31일 Daily Log입니다.">
+    <title>2026.07.31 Daily Log · Hellpython</title>
+    <link rel="stylesheet" href="/assets/site.css">
+    <style>
+      :root {
+        color-scheme: light;
+        --ink: #1f2937;
+        --muted: #64748b;
+        --line: #d8dee9;
+        --paper: #f8fafc;
+        --surface: rgba(255, 255, 255, 0.82);
+        --accent: #00707f;
+        --accent-dark: #003c44;
+        --soft: rgba(0, 112, 127, 0.08);
+        --pending: #92400e;
+        --pending-soft: rgba(217, 119, 6, 0.1);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(0, 112, 127, 0.14), transparent 34rem),
+          linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
+      }
+
+      a {
+        color: var(--accent-dark);
+        font-weight: 750;
+      }
+
+      :focus-visible {
+        outline: 3px solid rgba(0, 112, 127, 0.35);
+        outline-offset: 3px;
+      }
+
+      main {
+        width: min(920px, calc(100% - 40px));
+        margin: 0 auto;
+        padding: 40px 0 96px;
+      }
+
+      .log-nav {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px 20px;
+        margin-bottom: 64px;
+      }
+
+      .log-nav a {
+        text-decoration: none;
+      }
+
+      .hero {
+        display: grid;
+        gap: 20px;
+        padding-bottom: 20px;
+      }
+
+      .eyebrow,
+      .tag {
+        width: fit-content;
+        border-radius: 999px;
+        font-weight: 800;
+      }
+
+      .eyebrow {
+        padding: 8px 12px;
+        border: 1px solid var(--line);
+        color: var(--accent);
+        background: rgba(255, 255, 255, 0.74);
+        font-size: 14px;
+      }
+
+      h1,
+      h2,
+      h3,
+      p {
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 820px;
+        font-size: clamp(42px, 7.4vw, 72px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+      }
+
+      .lead {
+        max-width: 760px;
+        color: var(--muted);
+        font-size: clamp(18px, 2.4vw, 22px);
+        line-height: 1.75;
+      }
+
+      .section {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 24px;
+        padding-top: 52px;
+        margin-top: 52px;
+        border-top: 1px solid var(--line);
+      }
+
+      .section-heading {
+        display: grid;
+        gap: 10px;
+      }
+
+      .section h2 {
+        font-size: clamp(30px, 4vw, 42px);
+        letter-spacing: -0.025em;
+      }
+
+      .section-heading p,
+      .prose,
+      li {
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.75;
+      }
+
+      .summary-grid,
+      .metric-grid {
+        display: grid;
+        gap: 14px;
+      }
+
+      .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .metric-grid {
+        width: 100%;
+        min-width: 0;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+      }
+
+      .card {
+        display: grid;
+        gap: 12px;
+        min-width: 0;
+        padding: 22px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      .card h3 {
+        font-size: 20px;
+      }
+
+      .card p {
+        color: var(--muted);
+        line-height: 1.7;
+      }
+
+      .tag {
+        padding: 6px 10px;
+        color: var(--accent-dark);
+        background: var(--soft);
+        font-size: 12px;
+      }
+
+      .tag.pending {
+        color: var(--pending);
+        background: var(--pending-soft);
+      }
+
+      .metric {
+        min-width: 0;
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: var(--surface);
+      }
+
+      .metric strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 25px;
+      }
+
+      .metric span {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .expression-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 9px;
+        margin: 0;
+        padding: 0;
+        list-style: none;
+      }
+
+      .expression-group {
+        display: grid;
+        gap: 12px;
+      }
+
+      .expression-group h3 {
+        font-size: 17px;
+      }
+
+      .expression-list li {
+        padding: 8px 11px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ink);
+        background: rgba(255, 255, 255, 0.72);
+        font-size: 14px;
+        line-height: 1.35;
+      }
+
+      .note {
+        padding: 18px 20px;
+        border-left: 4px solid var(--accent);
+        color: var(--accent-dark);
+        background: var(--soft);
+        line-height: 1.7;
+        overflow-wrap: anywhere;
+      }
+
+      .note.pending {
+        border-left-color: #d97706;
+        color: var(--pending);
+        background: var(--pending-soft);
+      }
+
+      .learning-list,
+      .next-list {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+        min-width: 0;
+        margin: 0;
+        padding-left: 22px;
+      }
+
+      .learning-list li,
+      .next-list li {
+        overflow-wrap: anywhere;
+      }
+
+      .learning-list strong,
+      .next-list strong {
+        color: var(--ink);
+      }
+
+      .table-wrap {
+        width: 100%;
+        min-width: 0;
+        max-width: 100%;
+        overflow-x: auto;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: var(--surface);
+      }
+
+      table {
+        width: 100%;
+        min-width: 620px;
+        border-collapse: collapse;
+      }
+
+      th,
+      td {
+        padding: 16px 18px;
+        border-bottom: 1px solid var(--line);
+        text-align: left;
+      }
+
+      th {
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      td {
+        font-size: 15px;
+      }
+
+      tbody tr:last-child td {
+        border-bottom: 0;
+      }
+
+      .reflection {
+        font-size: clamp(21px, 3vw, 28px);
+        font-weight: 800;
+        line-height: 1.55;
+        letter-spacing: -0.015em;
+      }
+
+      @media (max-width: 720px) {
+        main {
+          width: min(100% - 28px, 920px);
+          padding-top: 28px;
+          padding-bottom: 64px;
+        }
+
+        .log-nav {
+          margin-bottom: 44px;
+        }
+
+        .summary-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .metric-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card {
+          padding: 19px;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        html {
+          scroll-behavior: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="brand" href="/">Hellpython Lab</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#projects">Research</a></li>
+          <li><a href="/#recent">Notebook</a></li>
+          <li class="nav-secondary"><a href="/#about">About</a></li>
+          <li class="nav-secondary"><a href="/#records">Archive</a></li>
+          <li><a href="/resume/">CV</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <nav class="log-nav" aria-label="Daily Log 이동">
+        <a href="/daily/">← Daily 목록</a>
+        <a href="/">Dev Log 홈 →</a>
+      </nav>
+
+      <header class="hero">
+        <div class="eyebrow">2026.07.31 · Daily Log</div>
+        <h1>영어·<wbr>Codetree</h1>
+        <p class="lead">
+          TOEIC 주문·배송 표현과 Quiz 결과,
+          Codetree JavaScript Chapter 2 Lesson 1 완료 범위를 기록했습니다.
+        </p>
+      </header>
+
+      <section class="section" aria-labelledby="summary-title">
+        <div class="section-heading">
+          <h2 id="summary-title">오늘 한눈에 보기</h2>
+          <p>학습한 범위와 현재 이해 수준을 결과 중심으로 정리했습니다.</p>
+        </div>
+        <div class="summary-grid">
+          <article class="card">
+            <span class="tag">ENGLISH</span>
+            <h3>주문과 배송</h3>
+            <p>TOEIC에 자주 나오는 주문·배송 단어 6개와 Collocation 3개를 학습했습니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag">REVIEW</span>
+            <h3>Quiz 5/5 · 100%</h3>
+            <p>오늘 학습한 단어와 표현을 모두 맞혔고 Mistake Log 추가는 없었습니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag">MEMORY</span>
+            <h3>신규 표현 · 헷갈림</h3>
+            <p>학습 직후 맞힌 상태이므로 아직 암기 완료로 변경하지 않았습니다.</p>
+          </article>
+          <article class="card">
+            <span class="tag">CODETREE</span>
+            <h3>Chapter 2 Lesson 1 · 100%</h3>
+            <p>사진 기준 Easy 4문제를 완료했습니다. 합계 7분, 40 XP입니다.</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="english-title">
+        <div class="section-heading">
+          <h2 id="english-title">English · 주문과 배송</h2>
+          <p>목표 TOEIC 750 · 주문·배송 관련 단어와 Collocation 학습</p>
+        </div>
+        <div class="metric-grid" aria-label="영어 학습 지표">
+          <div class="metric"><strong>9</strong><span>신규 단어·표현</span></div>
+          <div class="metric"><strong>5/5</strong><span>Quiz</span></div>
+          <div class="metric"><strong>100%</strong><span>정답률</span></div>
+          <div class="metric"><strong>0</strong><span>Mistake Log 추가</span></div>
+        </div>
+        <div class="expression-group">
+          <h3>신규 단어·표현 9개</h3>
+          <ul class="expression-list" aria-label="오늘의 신규 영어 단어와 표현 9개">
+            <li>order</li>
+            <li>shipment</li>
+            <li>delivery</li>
+            <li>package</li>
+            <li>warehouse</li>
+            <li>stock</li>
+            <li>place an order</li>
+            <li>track a shipment</li>
+            <li>be out of stock</li>
+          </ul>
+        </div>
+        <ul class="learning-list">
+          <li><strong>order:</strong> 동사로 직접 사용할 수 있고, <span lang="en">place an order</span>처럼 명사형 Collocation으로도 자주 사용합니다.</li>
+          <li><strong>재고 없음:</strong> <span lang="en">This item is currently out of stock.</span></li>
+          <li><strong>재고 없음:</strong> <span lang="en">This item is not currently in stock.</span>도 자연스럽습니다.</li>
+          <li><strong>Mistake Log:</strong> 오늘 추가한 항목은 없습니다.</li>
+          <li><strong>헷갈림:</strong> 오늘 배운 표현은 학습 직후 맞힌 상태이므로 아직 암기 완료로 변경하지 않습니다.</li>
+        </ul>
+        <p class="note">
+          다음 복습일은 <strong>2026.08.01</strong>입니다.
+          shipment / delivery, place an order, track a shipment, warehouse,
+          be out of stock을 우선 확인합니다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="codetree-title">
+        <div class="section-heading">
+          <h2 id="codetree-title">JavaScript · Chapter 2 Lesson 1</h2>
+          <p>Trail 1 · 입출력 · Foundation · “정수 입력”을 100% 완료했습니다.</p>
+        </div>
+        <div class="table-wrap" role="region" aria-label="Chapter 2 Lesson 1 완료 문제 표" tabindex="0">
+          <table>
+            <thead>
+              <tr>
+                <th>단계</th>
+                <th>문제</th>
+                <th>시간</th>
+                <th>XP</th>
+                <th>난이도</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>기본 문제</td>
+                <td>입력받아 계산</td>
+                <td>2m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+              <tr>
+                <td>연습 문제</td>
+                <td>점수 입출력</td>
+                <td>3m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+              <tr>
+                <td>연습 문제</td>
+                <td>입력받아 계산 4</td>
+                <td>1m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+              <tr>
+                <td>테스트 문제</td>
+                <td>정수 입력받아 계산</td>
+                <td>1m</td>
+                <td>10</td>
+                <td>Easy</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="prose">
+          정수를 입력받아 계산하고 결과를 출력하는 기초를 연습했습니다.
+          Chapter 2 Lesson 1은 4문제·7분·40 XP이며, 모든 문제를 100% 완료했습니다.
+        </p>
+      </section>
+
+      <section class="section" aria-labelledby="next-title">
+        <div class="section-heading">
+          <h2 id="next-title">다음 행동</h2>
+          <p>다음 학습을 시작할 때 먼저 확인할 항목입니다.</p>
+        </div>
+        <ul class="next-list">
+          <li><strong>English:</strong> 2026.08.01에 주문·배송 표현 5개를 문장 안에서 복습합니다.</li>
+          <li><strong>English 확인 기준:</strong> shipment와 delivery를 구분하고 place an order를 자연스럽게 사용합니다.</li>
+          <li><strong>JavaScript:</strong> 입력값을 받아 계산한 뒤 결과를 출력하는 흐름을 다시 설명합니다.</li>
+        </ul>
+      </section>
+
+      <section class="section" aria-labelledby="reflection-title">
+        <div class="section-heading">
+          <h2 id="reflection-title">한 줄 회고</h2>
+        </div>
+        <p class="reflection">
+          영어는 주문·배송 표현을 모두 맞혔고, JavaScript는 정수 입력과 계산의 기본 흐름을 연습했다.
+        </p>
+      </section>
+    </main>
+  </body>
+</html>
