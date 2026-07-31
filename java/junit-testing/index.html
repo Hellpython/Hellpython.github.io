@@ -8,6 +8,7 @@
       content="JUnit Jupiter와 Mockito를 실습하며 확인한 테스트 실행 구조, 반복·매개변수 테스트, Extension, mock 검증을 정리한 학습 기록입니다."
     >
     <title>JUnit 실습에서 무엇을 검증했는가 · Hellpython</title>
+    <link rel="stylesheet" href="/assets/site.css">
     <style>
       :root {
         color-scheme: light;
@@ -16,9 +17,9 @@
         --line: #d8dee9;
         --paper: #f8fafc;
         --surface: rgba(255, 255, 255, 0.84);
-        --accent: #0f766e;
-        --accent-dark: #115e59;
-        --soft: rgba(15, 118, 110, 0.08);
+        --accent: #00707f;
+        --accent-dark: #003c44;
+        --soft: rgba(0, 112, 127, 0.08);
         --warning: #92400e;
         --warning-soft: rgba(217, 119, 6, 0.1);
         --code: #17191f;
@@ -39,7 +40,7 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          radial-gradient(circle at top left, rgba(0, 112, 127, 0.14), transparent 34rem),
           linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
       }
 
@@ -49,7 +50,7 @@
       }
 
       :focus-visible {
-        outline: 3px solid rgba(15, 118, 110, 0.35);
+        outline: 3px solid rgba(0, 112, 127, 0.35);
         outline-offset: 3px;
       }
 
@@ -309,6 +310,20 @@
     </style>
   </head>
   <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="brand" href="/">Hellpython Lab</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#projects">Research</a></li>
+          <li><a href="/#recent">Notebook</a></li>
+          <li class="nav-secondary"><a href="/#about">About</a></li>
+          <li class="nav-secondary"><a href="/#records">Archive</a></li>
+          <li><a href="/resume/">CV</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <main>
       <nav class="log-nav" aria-label="페이지 이동">
         <a href="/">← Hellpython</a>

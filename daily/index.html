@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="오늘의 개발 과정과 판단, 검증 결과를 5분 안에 남기는 Hellpython의 Daily Dev Log 템플릿입니다.">
     <title>Daily Dev Log · Hellpython</title>
+    <link rel="stylesheet" href="/assets/site.css">
     <style>
       :root {
         color-scheme: light;
@@ -13,9 +14,9 @@
         --line: #d8dee9;
         --paper: #f8fafc;
         --surface: rgba(255, 255, 255, 0.8);
-        --accent: #0f766e;
-        --accent-dark: #115e59;
-        --soft: rgba(15, 118, 110, 0.08);
+        --accent: #00707f;
+        --accent-dark: #003c44;
+        --soft: rgba(0, 112, 127, 0.08);
       }
 
       * {
@@ -32,7 +33,7 @@
         font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
         color: var(--ink);
         background:
-          radial-gradient(circle at top left, rgba(15, 118, 110, 0.14), transparent 34rem),
+          radial-gradient(circle at top left, rgba(0, 112, 127, 0.14), transparent 34rem),
           linear-gradient(135deg, #ffffff 0%, var(--paper) 100%);
       }
 
@@ -46,7 +47,7 @@
       }
 
       :focus-visible {
-        outline: 3px solid rgba(15, 118, 110, 0.35);
+        outline: 3px solid rgba(0, 112, 127, 0.35);
         outline-offset: 3px;
       }
 
@@ -131,7 +132,7 @@
 
       .latest-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(15, 118, 110, 0.45);
+        border-color: rgba(0, 112, 127, 0.45);
         box-shadow: 0 18px 42px rgba(15, 23, 42, 0.08);
       }
 
@@ -332,6 +333,20 @@
     </style>
   </head>
   <body>
+    <header class="site-header">
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="brand" href="/">Hellpython Lab</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#projects">Research</a></li>
+          <li><a href="/#recent">Notebook</a></li>
+          <li class="nav-secondary"><a href="/#about">About</a></li>
+          <li class="nav-secondary"><a href="/#records">Archive</a></li>
+          <li><a href="/resume/">CV</a></li>
+        </ul>
+      </nav>
+    </header>
+
     <main>
       <nav class="log-nav" aria-label="개발 기록 이동">
         <a href="/">← Dev Log로 돌아가기</a>

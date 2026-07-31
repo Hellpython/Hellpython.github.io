@@ -4,446 +4,329 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="EcoWarden 프로젝트에서 FastAPI와 PostgreSQL/PostGIS로 LiDAR 이벤트 수집, append-only 보존, 실시간 전달을 구현한 기록입니다.">
-    <meta property="og:title" content="EcoWarden · Hellpython">
+    <meta property="og:title" content="EcoWarden · Hellpython Lab">
     <meta property="og:description" content="LiDAR 감지 이벤트를 신뢰 가능한 기록과 실시간 알림으로 연결한 Backend & Database 프로젝트">
     <meta property="og:type" content="article">
-    <title>EcoWarden · Hellpython</title>
+    <title>EcoWarden — Hellpython Lab</title>
+    <link rel="stylesheet" href="/assets/site.css">
     <style>
-      :root {
-        color-scheme: light;
-        --ink: #10251f;
-        --muted: #5f716b;
-        --line: #dce6e1;
-        --paper: #f5f8f6;
-        --card: rgba(255, 255, 255, 0.82);
-        --forest: #0d5c45;
-        --forest-dark: #073f30;
-        --mint: #bff0d8;
-        --lime: #dff5a5;
-        --shadow: 0 24px 60px rgba(7, 63, 48, 0.09);
-      }
-
-      * { box-sizing: border-box; }
-
-      html { scroll-behavior: smooth; }
-
-      body {
+      h1,
+      h2,
+      h3,
+      p,
+      dl,
+      dd {
         margin: 0;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at 12% 4%, rgba(191, 240, 216, 0.72), transparent 28rem),
-          radial-gradient(circle at 92% 16%, rgba(223, 245, 165, 0.42), transparent 24rem),
-          var(--paper);
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
-      a { color: inherit; }
-
-      .skip-link {
-        position: absolute;
-        top: -80px;
-        left: 16px;
-        z-index: 10;
-        padding: 10px 14px;
-        border-radius: 8px;
-        background: var(--forest-dark);
-        color: white;
-      }
-
-      .skip-link:focus { top: 16px; }
-
-      .shell {
-        width: min(1120px, calc(100% - 40px));
+      main {
+        max-width: 1000px;
         margin: 0 auto;
+        padding: 0 20px;
       }
 
-      header {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        min-height: 76px;
-        gap: 24px;
+      .page-head {
+        padding: 40px 0 8px;
       }
 
-      .brand {
-        color: var(--forest-dark);
+      .page-meta {
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .page-head h1 {
+        margin-top: 6px;
+        color: var(--heading);
+        font-size: clamp(28px, 4vw, 34px);
+        font-weight: 700;
+        line-height: 1.2;
+        letter-spacing: -0.01em;
+      }
+
+      .lede {
+        max-width: 720px;
+        margin-top: 14px;
         font-size: 16px;
-        font-weight: 900;
-        text-decoration: none;
+        line-height: 1.75;
       }
 
-      nav { display: flex; gap: 20px; }
-
-      nav a {
+      .head-note {
+        margin-top: 10px;
         color: var(--muted);
         font-size: 14px;
-        font-weight: 750;
-        text-decoration: none;
+        line-height: 1.6;
       }
 
-      nav a:hover, nav a:focus-visible { color: var(--forest); }
-
-      main { overflow: hidden; }
-
-      .hero {
-        min-height: 660px;
-        display: grid;
-        grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
-        align-items: center;
-        gap: 64px;
-        padding: 88px 0 112px;
-      }
-
-      .eyebrow {
+      .page-links {
         display: flex;
         flex-wrap: wrap;
-        gap: 8px;
-        margin-bottom: 24px;
+        gap: 18px;
+        margin-top: 16px;
+        font-size: 14px;
       }
 
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        min-height: 30px;
-        padding: 0 11px;
-        border: 1px solid rgba(13, 92, 69, 0.18);
-        border-radius: 999px;
-        color: var(--forest);
-        background: rgba(255, 255, 255, 0.66);
+      .page-links .primary {
+        font-weight: 600;
+      }
+
+      .page-links a:not(.primary) {
+        color: var(--muted);
+      }
+
+      .page-links a:not(.primary):hover {
+        color: var(--link);
+      }
+
+      .toc {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 16px;
+        margin-top: 24px;
+        padding-top: 12px;
+        border-top: 1px solid var(--line-soft);
+        font-size: 13px;
+      }
+
+      .toc a {
+        color: var(--muted);
+      }
+
+      .toc a:hover {
+        color: var(--link);
+      }
+
+      .section-block {
+        padding: 40px 0 8px;
+        scroll-margin-top: 16px;
+      }
+
+      .section-block + .section-block {
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .section-title {
+        padding-bottom: 10px;
+        border-bottom: 1px solid var(--line);
+        color: var(--heading);
+        font-size: 20px;
+        font-weight: 700;
+        line-height: 1.3;
+        letter-spacing: -0.01em;
+      }
+
+      .section-desc {
+        max-width: 720px;
+        margin-top: 12px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.7;
+      }
+
+      /* End-to-end flow — flat numbered columns, no card decoration */
+
+      .flow {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 24px;
+        margin-top: 20px;
+      }
+
+      .flow-step {
+        padding-top: 10px;
+        border-top: 2px solid var(--teal);
+      }
+
+      .step-no {
+        color: var(--link);
         font-size: 12px;
-        font-weight: 850;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .flow-step h3 {
+        margin-top: 6px;
+        color: var(--heading);
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.35;
+      }
+
+      .flow-step p {
+        margin-top: 6px;
+        color: var(--muted);
+        font-size: 13.5px;
+        line-height: 1.65;
+      }
+
+      /* Ownership / decisions — flat 2-column entries with thin rules */
+
+      .entry-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0 48px;
+        margin-top: 8px;
+      }
+
+      .entry-grid article {
+        padding: 18px 0;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .entry-label {
+        color: var(--link);
+        font-size: 11.5px;
+        font-weight: 700;
         letter-spacing: 0.04em;
       }
 
-      h1, h2, h3, p { margin-top: 0; }
-
-      h1 {
-        margin-bottom: 24px;
-        font-size: clamp(58px, 9vw, 112px);
-        line-height: 0.9;
-        letter-spacing: -0.065em;
-      }
-
-      .hero-copy {
-        max-width: 730px;
-        margin-bottom: 34px;
-        color: #3d534b;
-        font-size: clamp(20px, 2.3vw, 28px);
-        line-height: 1.55;
+      .entry-grid h3 {
+        margin-top: 6px;
+        color: var(--heading);
+        font-size: 16px;
+        font-weight: 700;
+        line-height: 1.4;
         word-break: keep-all;
       }
 
-      .actions {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 12px;
-      }
-
-      .button {
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        min-height: 46px;
-        padding: 0 18px;
-        border: 1px solid var(--forest);
-        border-radius: 10px;
-        color: white;
-        background: var(--forest);
+      .entry-grid p {
+        margin-top: 8px;
+        color: var(--ink);
         font-size: 14px;
-        font-weight: 850;
-        text-decoration: none;
-      }
-
-      .button:hover, .button:focus-visible { background: var(--forest-dark); }
-
-      .button.secondary {
-        color: var(--forest-dark);
-        background: rgba(255, 255, 255, 0.72);
-        border-color: var(--line);
-      }
-
-      .signal-card {
-        position: relative;
-        min-height: 390px;
-        display: grid;
-        align-content: space-between;
-        padding: 34px;
-        overflow: hidden;
-        border: 1px solid rgba(255, 255, 255, 0.32);
-        border-radius: 28px;
-        color: white;
-        background: var(--forest-dark);
-        box-shadow: var(--shadow);
-      }
-
-      .signal-card::before,
-      .signal-card::after {
-        content: "";
-        position: absolute;
-        border: 1px solid rgba(191, 240, 216, 0.26);
-        border-radius: 50%;
-      }
-
-      .signal-card::before { width: 280px; height: 280px; top: -88px; right: -86px; }
-      .signal-card::after { width: 170px; height: 170px; top: -30px; right: -26px; }
-
-      .signal {
-        position: relative;
-        z-index: 1;
-        width: 14px;
-        height: 14px;
-        border-radius: 50%;
-        background: var(--lime);
-        box-shadow: 0 0 0 12px rgba(223, 245, 165, 0.09), 0 0 42px var(--lime);
-      }
-
-      .signal-card strong {
-        display: block;
-        margin-bottom: 12px;
-        color: var(--mint);
-        font-size: 13px;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-      }
-
-      .signal-card p {
-        margin-bottom: 0;
-        color: white;
-        font-size: 27px;
-        font-weight: 820;
-        line-height: 1.25;
+        line-height: 1.7;
         word-break: keep-all;
       }
 
-      section { padding: 104px 0; }
+      /* 8-week tech notes — date-first rows */
 
-      .section-head {
+      .timeline {
+        margin-top: 12px;
+        border-top: 1px solid var(--line);
+      }
+
+      .week {
         display: grid;
-        grid-template-columns: 0.45fr 1fr;
-        gap: 48px;
-        margin-bottom: 48px;
+        grid-template-columns: 84px minmax(0, 1fr) auto;
+        align-items: baseline;
+        gap: 8px 20px;
+        padding: 14px 0;
+        border-bottom: 1px solid var(--line-soft);
       }
 
-      .kicker {
-        color: var(--forest);
-        font-size: 13px;
-        font-weight: 900;
-        letter-spacing: 0.1em;
-        text-transform: uppercase;
+      .week-no {
+        color: var(--link);
+        font-size: 12px;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
       }
 
-      h2 {
-        margin-bottom: 18px;
-        font-size: clamp(34px, 5vw, 58px);
-        line-height: 1.08;
-        letter-spacing: -0.04em;
-        word-break: keep-all;
+      .week h3 {
+        color: var(--heading);
+        font-size: 15px;
+        font-weight: 600;
+        line-height: 1.45;
       }
 
-      .section-copy {
-        max-width: 720px;
-        margin-bottom: 0;
+      .week p {
+        margin-top: 3px;
         color: var(--muted);
-        font-size: 18px;
+        font-size: 13px;
+        line-height: 1.6;
+        word-break: keep-all;
+      }
+
+      .week a {
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .closing p {
+        max-width: 720px;
+        margin-top: 14px;
+        font-size: 15px;
         line-height: 1.75;
         word-break: keep-all;
       }
 
-      .flow {
-        display: grid;
-        grid-template-columns: repeat(4, 1fr);
-        gap: 12px;
-      }
-
-      .flow-step {
-        position: relative;
-        min-height: 210px;
-        padding: 24px;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        background: var(--card);
-      }
-
-      .flow-step:not(:last-child)::after {
-        content: "→";
-        position: absolute;
-        top: 50%;
-        right: -21px;
-        z-index: 2;
-        display: grid;
-        width: 30px;
-        height: 30px;
-        place-items: center;
-        border: 1px solid var(--line);
-        border-radius: 50%;
-        color: var(--forest);
-        background: var(--paper);
-        font-weight: 900;
-      }
-
-      .step-no {
-        color: var(--forest);
-        font-size: 12px;
-        font-weight: 900;
-      }
-
-      .flow-step h3 { margin: 34px 0 10px; font-size: 21px; }
-      .flow-step p { margin: 0; color: var(--muted); line-height: 1.65; }
-
-      .dark {
-        color: white;
-        background: var(--forest-dark);
-      }
-
-      .dark .kicker { color: var(--mint); }
-      .dark h2 { color: white; }
-      .dark .section-copy { color: #bcd0c8; }
-
-      .ownership {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 16px;
-      }
-
-      .ownership article {
-        min-height: 236px;
-        padding: 30px;
-        border: 1px solid rgba(191, 240, 216, 0.18);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.055);
-      }
-
-      .ownership .num { color: var(--lime); font-size: 13px; font-weight: 900; }
-      .ownership h3 { margin: 34px 0 12px; font-size: 24px; }
-      .ownership p { margin: 0; color: #bcd0c8; line-height: 1.7; word-break: keep-all; }
-
-      .decisions {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 18px;
-      }
-
-      .decision {
-        padding: 28px;
-        border: 1px solid var(--line);
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.72);
-      }
-
-      .decision .label { color: var(--forest); font-size: 12px; font-weight: 900; letter-spacing: 0.08em; }
-      .decision h3 { margin: 18px 0 10px; font-size: 23px; line-height: 1.35; word-break: keep-all; }
-      .decision p { margin: 0; color: var(--muted); line-height: 1.75; word-break: keep-all; }
-
-      .timeline { border-top: 1px solid var(--line); }
-
-      .week {
-        display: grid;
-        grid-template-columns: 90px 1fr auto;
-        align-items: start;
-        gap: 26px;
-        padding: 26px 0;
-        border-bottom: 1px solid var(--line);
-      }
-
-      .week-no { color: var(--forest); font-size: 13px; font-weight: 900; }
-      .week h3 { margin: 0 0 7px; font-size: 20px; }
-      .week p { margin: 0; color: var(--muted); line-height: 1.65; word-break: keep-all; }
-      .week a { color: var(--forest); font-size: 14px; font-weight: 850; white-space: nowrap; }
-
-      .closing {
-        margin: 24px 0 104px;
-        padding: 54px;
-        border-radius: 26px;
-        background: linear-gradient(125deg, var(--mint), var(--lime));
-      }
-
-      .closing h2 { max-width: 760px; margin-bottom: 16px; }
-      .closing p { max-width: 720px; color: #2e5245; font-size: 18px; line-height: 1.7; word-break: keep-all; }
-      .closing .actions { margin-top: 28px; }
-
-      footer {
-        display: flex;
-        justify-content: space-between;
-        gap: 20px;
-        padding: 30px 0 48px;
-        border-top: 1px solid var(--line);
-        color: var(--muted);
-        font-size: 13px;
+      .closing .page-links {
+        margin-top: 16px;
       }
 
       @media (max-width: 860px) {
-        .hero { grid-template-columns: 1fr; gap: 42px; padding-top: 64px; }
-        .signal-card { min-height: 300px; }
-        .section-head { grid-template-columns: 1fr; gap: 14px; }
-        .flow { grid-template-columns: repeat(2, 1fr); }
-        .flow-step:not(:last-child)::after { display: none; }
+        .flow {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .entry-grid {
+          grid-template-columns: 1fr;
+        }
       }
 
-      @media (max-width: 620px) {
-        .shell { width: min(100% - 28px, 1120px); }
-        header { min-height: 64px; }
-        nav a:not(:first-child) { display: none; }
-        .hero { min-height: auto; padding: 64px 0 84px; }
-        h1 { font-size: clamp(52px, 20vw, 76px); }
-        section { padding: 76px 0; }
-        .flow, .ownership, .decisions { grid-template-columns: 1fr; }
-        .week { grid-template-columns: 56px 1fr; gap: 12px; }
-        .week a { grid-column: 2; }
-        .closing { margin-bottom: 76px; padding: 34px 24px; }
-        footer { flex-direction: column; }
+      @media (max-width: 640px) {
+        .page-head,
+        .section-block {
+          padding-top: 32px;
+        }
+
+        .flow {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .week {
+          grid-template-columns: 64px minmax(0, 1fr);
+        }
+
+        .week a {
+          grid-column: 2;
+        }
       }
     </style>
   </head>
   <body>
     <a class="skip-link" href="#content">본문으로 이동</a>
-    <header class="shell">
-      <a class="brand" href="/">Hellpython</a>
-      <nav aria-label="페이지 탐색">
-        <a href="#contribution">기여</a>
-        <a href="#decisions">설계 판단</a>
-        <a href="#notes">Tech Notes</a>
+    <header class="site-header">
+      <nav class="nav" aria-label="주요 메뉴">
+        <a class="brand" href="/">Hellpython Lab</a>
+        <ul class="nav-links">
+          <li><a href="/">Home</a></li>
+          <li><a href="/#projects">Research</a></li>
+          <li><a href="/#recent">Notebook</a></li>
+          <li class="nav-secondary"><a href="/#about">About</a></li>
+          <li class="nav-secondary"><a href="/#records">Archive</a></li>
+          <li><a href="/resume/">CV</a></li>
+        </ul>
       </nav>
     </header>
 
     <main id="content">
-      <div class="shell hero">
-        <div>
-          <div class="eyebrow">
-            <span class="pill">ABC 프로젝트 멘토링 1기</span>
-            <span class="pill">2026.04–05</span>
-            <span class="pill">Backend &amp; Database</span>
-          </div>
-          <h1>Eco<br>Warden</h1>
-          <p class="hero-copy">
-            LiDAR가 감지한 무단투기 이벤트를 받아 검증하고, 변경 이력을 보존하며,
-            대시보드까지 실시간으로 전달하는 데이터 파이프라인을 만들었습니다.
-          </p>
-          <div class="actions">
-            <a class="button" href="#contribution">내가 맡은 일</a>
-            <a class="button secondary" href="https://api.ecowarden.systems/dashboard">Dashboard</a>
-            <a class="button secondary" href="https://api.ecowarden.systems/wisoft-fighting">Live API 문서</a>
-          </div>
-        </div>
-        <aside class="signal-card" aria-label="프로젝트 핵심 요약">
-          <span class="signal" aria-hidden="true"></span>
-          <div>
-            <strong>My responsibility</strong>
-            <p>센서 이벤트가<br>신뢰할 수 있는 기록이 될 때까지.</p>
-          </div>
-        </aside>
+      <div class="page-head">
+        <p class="page-meta">Selected Research · ABC 프로젝트 멘토링 1기 · 2026.04–05 · Backend &amp; Database · 완료된 프로젝트</p>
+        <h1>EcoWarden — 센서 이벤트는 어떻게 신뢰할 수 있는 기록이 되는가</h1>
+        <p class="lede">
+          LiDAR가 감지한 무단투기 이벤트를 받아 검증하고, 변경 이력을 보존하며,
+          대시보드까지 실시간으로 전달하는 데이터 파이프라인을 만들었습니다.
+        </p>
+        <p class="head-note">맡은 범위 — 센서 이벤트가 신뢰할 수 있는 기록이 될 때까지.</p>
+        <p class="page-links">
+          <a class="primary" href="https://web.ecowarden.systems/">Project website ↗</a>
+          <a href="https://api.ecowarden.systems/dashboard">Dashboard ↗</a>
+          <a href="https://api.ecowarden.systems/wisoft-fighting">Live API 문서 ↗</a>
+        </p>
+        <nav class="toc" aria-label="페이지 탐색">
+          <a href="#flow">데이터 흐름</a>
+          <a href="#contribution">기여</a>
+          <a href="#decisions">설계 판단</a>
+          <a href="#notes">Tech Notes</a>
+        </nav>
       </div>
 
-      <section class="shell" aria-labelledby="flow-title">
-        <div class="section-head">
-          <div class="kicker">End-to-end flow</div>
-          <div>
-            <h2 id="flow-title">감지에서 기록과 알림까지</h2>
-            <p class="section-copy">
-              팀의 LiDAR 감지 결과와 Unity 시각화 사이에서 데이터 계약, 저장 규칙,
-              실시간 전달을 연결하는 역할을 맡았습니다.
-            </p>
-          </div>
-        </div>
+      <section class="section-block" id="flow" aria-labelledby="flow-title">
+        <h2 id="flow-title" class="section-title">감지에서 기록과 알림까지</h2>
+        <p class="section-desc">
+          팀의 LiDAR 감지 결과와 Unity 시각화 사이에서 데이터 계약, 저장 규칙,
+          실시간 전달을 연결하는 역할을 맡았습니다.
+        </p>
         <div class="flow" aria-label="EcoWarden 데이터 흐름">
           <article class="flow-step">
             <span class="step-no">01</span>
@@ -468,84 +351,67 @@
         </div>
       </section>
 
-      <div class="dark">
-        <section class="shell" id="contribution" aria-labelledby="contribution-title">
-          <div class="section-head">
-            <div class="kicker">What I owned</div>
-            <div>
-              <h2 id="contribution-title">Backend와 Database를 책임졌습니다</h2>
-              <p class="section-copy">
-                보고서와 8주간의 Tech Note에 반복해서 남은 담당 범위를 기준으로 정리했습니다.
-              </p>
-            </div>
-          </div>
-          <div class="ownership">
-            <article>
-              <span class="num">01 / API CONTRACT</span>
-              <h3>입력 규약과 수신 API</h3>
-              <p>DumpingEvent와 DepartureEvent의 Pydantic model을 정의하고, FastAPI endpoint와 Swagger 문서로 팀 간 payload 규약을 맞췄습니다.</p>
-            </article>
-            <article>
-              <span class="num">02 / PERSISTENCE</span>
-              <h3>Append-only 저장 구조</h3>
-              <p>UPDATE·DELETE를 제한하고 정정은 새 row와 invalidated_by 관계로 남기는 구조를 설계했습니다. 프로젝트 범위에서 차단 동작을 직접 확인했습니다.</p>
-            </article>
-            <article>
-              <span class="num">03 / DATA PIPELINE</span>
-              <h3>이미지·시간·위치 정제</h3>
-              <p>base64 이미지는 파일로 분리하고 DB에는 경로를 저장했습니다. timestamp를 표준화하고 PostGIS로 위치 조회 기반을 만들었습니다.</p>
-            </article>
-            <article>
-              <span class="num">04 / REAL TIME</span>
-              <h3>실시간 전달과 연결 관리</h3>
-              <p>WebSocket heartbeat를 비동기 task로 분리하고, 중복 전송과 끊김 문제를 줄인 뒤 센서→DB→화면 E2E 흐름을 점검했습니다.</p>
-            </article>
-          </div>
-        </section>
-      </div>
-
-      <section class="shell" id="decisions" aria-labelledby="decisions-title">
-        <div class="section-head">
-          <div class="kicker">Engineering decisions</div>
-          <div>
-            <h2 id="decisions-title">구현보다 오래 남은 판단</h2>
-            <p class="section-copy">
-              문제가 생겼을 때 단순히 우회하지 않고, 데이터의 의미와 실패 방식을 먼저 정했습니다.
-            </p>
-          </div>
+      <section class="section-block" id="contribution" aria-labelledby="contribution-title">
+        <h2 id="contribution-title" class="section-title">Backend와 Database를 책임졌습니다</h2>
+        <p class="section-desc">
+          보고서와 8주간의 Tech Note에 반복해서 남은 담당 범위를 기준으로 정리했습니다.
+        </p>
+        <div class="entry-grid">
+          <article>
+            <span class="entry-label">01 / API CONTRACT</span>
+            <h3>입력 규약과 수신 API</h3>
+            <p>DumpingEvent와 DepartureEvent의 Pydantic model을 정의하고, FastAPI endpoint와 Swagger 문서로 팀 간 payload 규약을 맞췄습니다.</p>
+          </article>
+          <article>
+            <span class="entry-label">02 / PERSISTENCE</span>
+            <h3>Append-only 저장 구조</h3>
+            <p>UPDATE·DELETE를 제한하고 정정은 새 row와 invalidated_by 관계로 남기는 구조를 설계했습니다. 프로젝트 범위에서 차단 동작을 직접 확인했습니다.</p>
+          </article>
+          <article>
+            <span class="entry-label">03 / DATA PIPELINE</span>
+            <h3>이미지·시간·위치 정제</h3>
+            <p>base64 이미지는 파일로 분리하고 DB에는 경로를 저장했습니다. timestamp를 표준화하고 PostGIS로 위치 조회 기반을 만들었습니다.</p>
+          </article>
+          <article>
+            <span class="entry-label">04 / REAL TIME</span>
+            <h3>실시간 전달과 연결 관리</h3>
+            <p>WebSocket heartbeat를 비동기 task로 분리하고, 중복 전송과 끊김 문제를 줄인 뒤 센서→DB→화면 E2E 흐름을 점검했습니다.</p>
+          </article>
         </div>
-        <div class="decisions">
-          <article class="decision">
-            <span class="label">CORRECTION ≠ MUTATION</span>
+      </section>
+
+      <section class="section-block" id="decisions" aria-labelledby="decisions-title">
+        <h2 id="decisions-title" class="section-title">구현보다 오래 남은 판단</h2>
+        <p class="section-desc">
+          문제가 생겼을 때 단순히 우회하지 않고, 데이터의 의미와 실패 방식을 먼저 정했습니다.
+        </p>
+        <div class="entry-grid">
+          <article>
+            <span class="entry-label">CORRECTION ≠ MUTATION</span>
             <h3>기존 증거를 고치는 대신 정정 이벤트를 추가</h3>
             <p>append-only 정책과 운영상 정정 요구를 함께 만족시키기 위해 원본을 유지하고 새 기록이 이전 기록을 무효화하도록 연결했습니다.</p>
           </article>
-          <article class="decision">
-            <span class="label">STORE REFERENCES</span>
+          <article>
+            <span class="entry-label">STORE REFERENCES</span>
             <h3>무거운 이미지와 검색할 metadata를 분리</h3>
             <p>base64 문자열을 파일로 디코딩하고 DB에는 접근 경로를 남겨, 관계형 DB가 이벤트 조회와 무결성에 집중하도록 했습니다.</p>
           </article>
-          <article class="decision">
-            <span class="label">COORDINATE SEMANTICS</span>
+          <article>
+            <span class="entry-label">COORDINATE SEMANTICS</span>
             <h3>센서 평면 좌표와 지리 좌표의 의미를 구분</h3>
             <p>LiDAR 좌표를 실제 위·경도로 단정하지 않고 프로젝트 좌표계로 저장했습니다. 지도 변환은 별도 시각화 metadata의 책임으로 분리했습니다.</p>
           </article>
-          <article class="decision">
-            <span class="label">VERIFY THE WHOLE PATH</span>
+          <article>
+            <span class="entry-label">VERIFY THE WHOLE PATH</span>
             <h3>개별 API 성공보다 E2E 흐름을 검증</h3>
             <p>image_data와 image_base64 불일치처럼 경계에서 생기는 결함을 찾기 위해 수신, INSERT, broadcast, 화면 표시를 한 흐름으로 반복 확인했습니다.</p>
           </article>
         </div>
       </section>
 
-      <section class="shell" id="notes" aria-labelledby="notes-title">
-        <div class="section-head">
-          <div class="kicker">8-week Tech Notes</div>
-          <div>
-            <h2 id="notes-title">매주 남긴 작업 기록</h2>
-            <p class="section-copy">계획부터 통합 검증과 회고까지, 당시의 판단과 시행착오는 원문에서 확인할 수 있습니다.</p>
-          </div>
-        </div>
+      <section class="section-block" id="notes" aria-labelledby="notes-title">
+        <h2 id="notes-title" class="section-title">매주 남긴 작업 기록</h2>
+        <p class="section-desc">계획부터 통합 검증과 회고까지, 당시의 판단과 시행착오는 원문에서 확인할 수 있습니다.</p>
         <div class="timeline">
           <article class="week">
             <span class="week-no">WEEK 01</span>
@@ -590,23 +456,31 @@
         </div>
       </section>
 
-      <aside class="shell closing" aria-labelledby="closing-title">
-        <h2 id="closing-title">결과보다 과정이 보이는 프로젝트 기록</h2>
+      <section class="section-block closing" aria-labelledby="closing-title">
+        <h2 id="closing-title" class="section-title">결과보다 과정이 보이는 프로젝트 기록</h2>
         <p>
           EcoWarden은 센서, 서버, DB, 시각화가 하나의 흐름으로 맞물려야 완성되는 팀 프로젝트였습니다.
           이 경험을 통해 “고장 나지 않는 시스템”보다 “문제가 생겨도 기록을 잃지 않고 원인을 찾을 수 있는 시스템”을 먼저 생각하게 됐습니다.
         </p>
-        <div class="actions">
-          <a class="button" href="https://ecowarden.tistory.com/">Tech Note 전체 보기</a>
-          <a class="button secondary" href="https://api.ecowarden.systems/dashboard">Dashboard 열기</a>
-          <a class="button secondary" href="https://api.ecowarden.systems/wisoft-fighting">Swagger UI 열기</a>
-        </div>
-      </aside>
+        <p class="page-links">
+          <a class="primary" href="https://ecowarden.tistory.com/">Tech Note 전체 보기 ↗</a>
+          <a href="https://api.ecowarden.systems/dashboard">Dashboard ↗</a>
+          <a href="https://api.ecowarden.systems/wisoft-fighting">Swagger UI ↗</a>
+        </p>
+      </section>
     </main>
 
-    <footer class="shell">
-      <span>© 2026 Hellpython</span>
-      <a href="/">Dev Log로 돌아가기</a>
+    <footer class="site-footer">
+      <div class="footer-inner">
+        <span>© 2026 Hellpython Lab · Personal Research &amp; Engineering.</span>
+        <span class="footer-links">
+          <a href="/">Home</a>
+          <a href="/#records">Archive</a>
+          <a href="https://github.com/Hellpython">GitHub</a>
+          <a href="/resume/">CV</a>
+          <a href="https://lessontutor.tistory.com/">Tistory</a>
+        </span>
+      </div>
     </footer>
   </body>
 </html>
